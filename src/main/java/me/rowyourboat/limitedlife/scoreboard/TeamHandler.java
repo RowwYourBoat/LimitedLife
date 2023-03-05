@@ -1,8 +1,10 @@
 package me.rowyourboat.limitedlife.scoreboard;
 
+import me.rowyourboat.limitedlife.LimitedLife;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -38,13 +40,21 @@ public class TeamHandler {
     }
 
     public void changeTeamAndGamemodeAccordingly(Player player, long timeLeft) {
-        if (timeLeft == 0) {
+        if (timeLeft <= -1) {
+            scoreboard.getTeams().forEach(team -> {
+                if (team.hasEntry(player.getName()))
+                    team.removeEntry(player.getName());
+            });
+            player.setGameMode(GameMode.ADVENTURE);
+        } else if (timeLeft == 0) {
             grayName.addEntry(player.getName());
             player.setGameMode(GameMode.SPECTATOR);
-        } else if (timeLeft < 28800) {
+            player.playSound(player, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10, 1);
+            Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + player.getName() + " ran out of time!");
+        } else if (timeLeft < LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.red-name")) {
             redName.addEntry(player.getName());
             player.setGameMode(GameMode.SURVIVAL);
-        } else if (timeLeft < 57600) {
+        } else if (timeLeft < LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.yellow-name")) {
             yellowName.addEntry(player.getName());
             player.setGameMode(GameMode.SURVIVAL);
         } else {

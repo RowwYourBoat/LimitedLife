@@ -4,9 +4,12 @@ import me.rowyourboat.limitedlife.LimitedLife;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
 public class SaveHandler {
 
@@ -14,11 +17,11 @@ public class SaveHandler {
     private YamlConfiguration saveYaml;
 
     public SaveHandler() {
-        saveFile = new File(LimitedLife.plugin.getDataFolder(), "save.yml");
+        saveFile = new File(LimitedLife.plugin.getDataFolder(), "data" + File.separator + "save.yml");
         saveYaml = YamlConfiguration.loadConfiguration(saveFile);
     }
 
-    private void save() {
+    public void save() {
         try {
             saveYaml.save(saveFile);
         } catch (IOException e) {
@@ -26,13 +29,46 @@ public class SaveHandler {
         }
     }
 
-    public void setPlayerTimeLeft(OfflinePlayer player, long timeToSet) {
-        ConfigurationSection section = getPlayerSaveData(player);
-        section.set("TimeRemaining", timeToSet);
+    public void setBoogeymen(List<UUID> playerUUIDList) {
+        saveYaml.set("Boogeymen", playerUUIDList);
         save();
     }
 
-    public int getPlayerTimeLeft(OfflinePlayer player) {
+    public void cureBoogeyman(UUID boogeymanToCure) {
+
+    }
+
+    public void sendTimeChangeTitle(Player player, String title) {
+        if (player == null) return;
+        player.sendTitle(title, null, 10, 50, 10);
+    }
+
+    public void setPlayerTimeLeft(OfflinePlayer player, long timeToSet) {
+        ConfigurationSection section = getPlayerSaveData(player);
+        section.set("TimeRemaining", timeToSet);
+    }
+
+    public void subtractPlayerTime(OfflinePlayer player, long timeToSubtract) {
+        long timeLeft = getPlayerTimeLeft(player);
+        if (timeLeft-timeToSubtract<0) {
+            setPlayerTimeLeft(player, 0);
+            return;
+        }
+        setPlayerTimeLeft(player, timeLeft-timeToSubtract);
+    }
+
+    public void addPlayerTime(OfflinePlayer player, long timeToAdd) {
+        long timeLeft = getPlayerTimeLeft(player);
+        setPlayerTimeLeft(player, timeLeft+timeToAdd);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<UUID> getBoogeymenList() {
+        if (!saveYaml.contains("Boogeymen")) return null;
+        return (List<UUID>) saveYaml.getList("Boogeymen");
+    }
+
+    public long getPlayerTimeLeft(OfflinePlayer player) {
         return getPlayerSaveData(player).getInt("TimeRemaining");
     }
 

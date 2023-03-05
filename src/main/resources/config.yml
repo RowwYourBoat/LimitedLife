@@ -24,20 +24,17 @@ boogeyman:
   time-gain-on-boogey-kill: 3600
 
   ## The amount of time lost when someone gets killed by a boogeyman (in seconds)
-  time-lost-on-boogey-kill: 7200
+  time-lost-on-boogey-death: 7200
 
 
 
 
 penalties:
-  ## The amount of time players lose after dying (in seconds)
+  ## The amount of time players lose upon dying (in seconds)
   time-lost-on-death: 3600
 
-
-
-
 rewards:
-  ## The amount of time players gain after killing someone (in seconds)
+  ## The amount of time players upon killing someone (in seconds)
   time-gain-on-kill: 1800
 
 
@@ -59,6 +56,18 @@ enchantments:
   ## max-level value in an anvil.
   stacking-nerf: true
   max-level: 1
+
+
+
+
+name-colour-thresholds:
+  ## The amount of time the player needs to have left in order to become a red name (in seconds)
+  ## default: 28800 (8 hours)
+  red-name: 28800
+
+  ## The amount of time the player needs to have left in order to become a yellow name (in seconds)
+  ## default: 57600 (16 hours)
+  yellow-name: 57600
 
 
 

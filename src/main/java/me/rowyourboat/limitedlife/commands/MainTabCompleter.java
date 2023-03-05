@@ -11,12 +11,13 @@ public class MainTabCompleter implements TabCompleter {
 
     public List<String> getSubCommands() {
         List<String> arguments = new ArrayList<>();
-        arguments.add("countdown");
+        arguments.add("timer");
         arguments.add("boogeyman");
+        arguments.add("settime");
         return arguments;
     }
 
-    public List<String> getCountdownCommands() {
+    public List<String> getTimerCommands() {
         List<String> arguments = new ArrayList<>();
         arguments.add("start");
         arguments.add("pause");
@@ -29,8 +30,11 @@ public class MainTabCompleter implements TabCompleter {
         if (args.length == 1)
             return getSubCommands();
         else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("countdown"))
-                return getCountdownCommands();
+            if (args[0].equalsIgnoreCase("timer"))
+                return getTimerCommands();
+        } else if (args.length == 3) {
+            if (args[0].equalsIgnoreCase("timer"))
+                return null;
         }
 
         return new ArrayList<>();
