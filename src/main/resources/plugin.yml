@@ -1,0 +1,20 @@
+name: LimitedLife
+version: '${project.version}'
+main: me.rowyourboat.limitedlife.LimitedLife
+api-version: 1.19
+authors: [Rowan]
+description: A recreation of the plugin/mod used in the official Limited Life series by Grian!
+website: https://github.com/RowwYourBoat
+
+commands:
+  limitedlife:
+    permission: limitedlife.admin
+    description: Holder of all sub-commands.
+    usage: /lf help
+    aliases:
+      - lf
+
+permissions:
+  limitedlife.admin:
+    default: op
+    description: Grants permission to all sub-commands.

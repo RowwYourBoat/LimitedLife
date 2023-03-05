@@ -1,0 +1,68 @@
+## Don't change this value!
+config-version: 1
+
+
+
+
+## The amount of hours everyone starts off with
+start-time-in-hours: 24
+
+
+
+
+boogeyman:
+  ## The amount of time it takes for the boogeyman to actually be rolled
+  ## after running the command
+  roll-delay-in-minutes: 10
+
+  ## The maximum and minimum amount of boogeymen that are able to be chosen
+  ## Set both to the same value to force a certain amount
+  amount-max: 1
+  amount-min: 1
+
+  ## The amount of time gained when a boogeyman secures a kill (in seconds)
+  time-gain-on-boogey-kill: 3600
+
+  ## The amount of time lost when someone gets killed by a boogeyman (in seconds)
+  time-lost-on-boogey-kill: 7200
+
+
+
+
+penalties:
+  ## The amount of time players lose after dying (in seconds)
+  time-lost-on-death: 3600
+
+
+
+
+rewards:
+  ## The amount of time players gain after killing someone (in seconds)
+  time-gain-on-kill: 1800
+
+
+
+
+enchantments:
+  table-craftable: true
+
+
+  ## Only change the following two settings if you want the table to not be craftable!
+  table-breakable: true
+
+  ## Makes every enchantment table on the ground immortal and unable to be despawned when enabled.
+  ## E.x. it won't burn in lava and can't be blown up.
+  table-indestructible-on-drop: false
+
+
+  ## When enabled, enchantments can't be stacked to levels higher than the
+  ## max-level value in an anvil.
+  stacking-nerf: true
+  max-level: 1
+
+
+
+
+custom-chat-format:
+  enabled: false
+  format: "player: message"
