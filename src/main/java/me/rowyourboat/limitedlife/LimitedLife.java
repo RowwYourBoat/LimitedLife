@@ -6,6 +6,7 @@ import me.rowyourboat.limitedlife.data.SaveHandler;
 import me.rowyourboat.limitedlife.listeners.PlayerDeathEvents;
 import me.rowyourboat.limitedlife.listeners.PlayerJoinEvents;
 import me.rowyourboat.limitedlife.scoreboard.TeamHandler;
+import me.rowyourboat.limitedlife.util.CustomRecipes;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
@@ -17,6 +18,7 @@ public final class LimitedLife extends JavaPlugin {
 
     public static SaveHandler SaveHandler;
     public static TeamHandler TeamHandler;
+    public static CustomRecipes CustomRecipes;
 
     public static boolean globalTimerActive;
 
@@ -27,6 +29,7 @@ public final class LimitedLife extends JavaPlugin {
 
         SaveHandler = new SaveHandler();
         TeamHandler = new TeamHandler();
+        CustomRecipes = new CustomRecipes();
 
         PluginCommand limitedlifeCommand = plugin.getCommand("limitedlife");
         if (limitedlifeCommand != null) {
@@ -43,6 +46,8 @@ public final class LimitedLife extends JavaPlugin {
                 + "\nRun '/lf boogeyman roll' to roll the boogeyman!"
                 + "\nRun '/lf help' for a list of all commands!"
         );
+
+        Bukkit.getOnlinePlayers().forEach(CustomRecipes::grant);
     }
 
     @Override

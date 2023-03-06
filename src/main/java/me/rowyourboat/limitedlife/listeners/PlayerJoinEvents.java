@@ -12,4 +12,9 @@ public class PlayerJoinEvents implements Listener {
         LimitedLife.TeamHandler.changeTeamAndGamemodeAccordingly(event.getPlayer(), LimitedLife.SaveHandler.getPlayerTimeLeft(event.getPlayer()));
     }
 
+    @EventHandler
+    public void grantRecipesOnJoin(PlayerJoinEvent event) {
+        LimitedLife.CustomRecipes.grant(event.getPlayer());
+    }
+
 }
