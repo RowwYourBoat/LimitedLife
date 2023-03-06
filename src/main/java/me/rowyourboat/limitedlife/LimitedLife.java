@@ -4,6 +4,7 @@ import me.rowyourboat.limitedlife.commands.MainCommandExecutor;
 import me.rowyourboat.limitedlife.commands.MainTabCompleter;
 import me.rowyourboat.limitedlife.data.SaveHandler;
 import me.rowyourboat.limitedlife.listeners.PlayerDeathEvents;
+import me.rowyourboat.limitedlife.listeners.PlayerJoinEvents;
 import me.rowyourboat.limitedlife.scoreboard.TeamHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,6 +35,7 @@ public final class LimitedLife extends JavaPlugin {
         }
 
         Bukkit.getPluginManager().registerEvents(new PlayerDeathEvents(), plugin);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoinEvents(), plugin);
 
         plugin.saveDefaultConfig();
         plugin.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[LimitedLife] The plugin has been loaded!"

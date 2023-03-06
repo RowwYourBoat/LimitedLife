@@ -1,5 +1,6 @@
 package me.rowyourboat.limitedlife.commands;
 
+import me.rowyourboat.limitedlife.commands.subcommands.ModifyTimeCommand;
 import me.rowyourboat.limitedlife.commands.subcommands.BoogeymanCommand;
 import me.rowyourboat.limitedlife.commands.subcommands.TimerCommand;
 import org.bukkit.command.Command;
@@ -16,6 +17,8 @@ public class MainCommandExecutor implements CommandExecutor {
                 return TimerCommand.execute(commandSender, args);
             else if (args[0].equalsIgnoreCase("boogeyman"))
                 return BoogeymanCommand.execute(commandSender, args);
+            else if (args[0].equalsIgnoreCase("modifytime"))
+                return ModifyTimeCommand.execute(commandSender, args);
         }
         return false;
     }

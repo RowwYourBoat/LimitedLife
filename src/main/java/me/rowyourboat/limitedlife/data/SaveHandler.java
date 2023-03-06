@@ -1,6 +1,7 @@
 package me.rowyourboat.limitedlife.data;
 
 import me.rowyourboat.limitedlife.LimitedLife;
+import me.rowyourboat.limitedlife.countdown.PlayerTimerTask;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -69,7 +70,11 @@ public class SaveHandler {
     }
 
     public void removePlayerDeathMark(OfflinePlayer player) {
-        getMarkedAsDeadList().remove(player.getUniqueId().toString());
+        String uuidString = player.getUniqueId().toString();
+        if (getMarkedAsDeadList().contains(uuidString))
+            if (LimitedLife.globalTimerActive)
+                new PlayerTimerTask(player);
+        getMarkedAsDeadList().remove(uuidString);
         save();
     }
 
@@ -108,17 +113,19 @@ public class SaveHandler {
         save();
     }
 
+    @SuppressWarnings("unchecked")
     public List<String> getBoogeymenList() {
         if (!saveYaml.contains("Boogeymen")) return new ArrayList<>();
-        return saveYaml.getStringList("Boogeymen");
+        return (List<String>) saveYaml.getList("Boogeymen");
     }
 
     public long getPlayerTimeLeft(OfflinePlayer player) {
         return getPlayerSaveData(player).getInt("TimeRemaining");
     }
 
+    @SuppressWarnings("unchecked")
     public List<String> getMarkedAsDeadList() {
-        return saveYaml.getStringList("marked-as-dead-list");
+        return (List<String>) saveYaml.getList("marked-as-dead-list");
     }
 
     public ConfigurationSection getPlayerSaveData(OfflinePlayer player) {

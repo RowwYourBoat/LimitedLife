@@ -40,6 +40,19 @@ rewards:
 
 
 
+recipes:
+  ## Creates a new recipe for tnt which replaces most of the gunpowder required with paper
+  paper-tnt: true
+  ## Makes it so that helmets are unobtainable
+  disable-helmets: true
+  ## Makes it so that bookshelves are unobtainable
+  disable-bookshelves: true
+  craftable-saddle: true
+  craftable-name-tag: true
+
+
+
+
 enchantments:
   table-craftable: true
 

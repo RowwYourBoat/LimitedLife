@@ -55,7 +55,7 @@ public class TeamHandler {
         } else if (timeLeft == 0) {
             grayName.addEntry(player.getName());
             player.setGameMode(GameMode.SPECTATOR);
-            if (LimitedLife.SaveHandler.getMarkedAsDeadList().contains(player.getUniqueId().toString())) {
+            if (!LimitedLife.SaveHandler.getMarkedAsDeadList().contains(player.getUniqueId().toString())) {
                 player.playSound(player, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10, 1);
                 Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + player.getName() + " ran out of time!");
             }
