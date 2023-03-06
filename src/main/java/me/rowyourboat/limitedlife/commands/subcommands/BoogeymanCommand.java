@@ -34,27 +34,41 @@ public class BoogeymanCommand {
 
     private static void rollBoogeyman(int amount) {
         List<UUID> boogeymenList = new ArrayList<>();
-        List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
+        List<UUID> playerUUIDs = new ArrayList<>();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (LimitedLife.plugin.getConfig().getBoolean("boogeyman.red-boogeymen"))
+                playerUUIDs.add(player.getUniqueId());
+            else if (LimitedLife.SaveHandler.getPlayerTimeLeft(player) > LimitedLife.plugin.getConfig().getLong("name-colour-thresholds.red-name"))
+                playerUUIDs.add(player.getUniqueId());
+        }
+        if (playerUUIDs.size() < amount) {
+            Bukkit.broadcastMessage(ChatColor.DARK_RED + "Not enough green/yellow names!");
+            rolling = false;
+            return;
+        }
         for (int i = amount ; i > 0 ; i--) {
-            Player chosenPlayer = null;
+            UUID chosenPlayer = null;
             while (chosenPlayer == null) {
                 Random random = new Random();
-                int r = random.nextInt(players.size());
-                if (!boogeymenList.contains(players.get(r).getUniqueId())) {
-                    chosenPlayer = players.get(r);
-                    boogeymenList.add(chosenPlayer.getUniqueId());
+                int r = random.nextInt(playerUUIDs.size());
+                if (!boogeymenList.contains(playerUUIDs.get(r))) {
+                    chosenPlayer = playerUUIDs.get(r);
+                    boogeymenList.add(chosenPlayer);
                 }
             }
         }
         LimitedLife.SaveHandler.setBoogeymen(boogeymenList);
 
-        for (Player player : players) {
-            if (boogeymenList.contains(player.getUniqueId())) {
-                player.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman", null, 10, 60, 10);
-                player.playSound(player, Sound.ENTITY_ENDER_DRAGON_DEATH, 3, 1);
-            } else {
-                player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "NOT The Boogeyman", null, 10, 60, 10);
-                player.playSound(player, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 3, 1);
+        for (UUID playerUUID : playerUUIDs) {
+            Player player = Bukkit.getPlayer(playerUUID);
+            if (player != null) {
+                if (boogeymenList.contains(playerUUID)) {
+                    player.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman", null, 10, 60, 10);
+                    player.playSound(player, Sound.ENTITY_ENDER_DRAGON_DEATH, 3, 1);
+                } else {
+                    player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "NOT The Boogeyman", null, 10, 60, 10);
+                    player.playSound(player, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 3, 1);
+                }
             }
         }
 
@@ -72,6 +86,10 @@ public class BoogeymanCommand {
             SaveHandler.punishBoogeymen();
             sender.sendMessage(ChatColor.DARK_GREEN + "The existing boogeymen have all been punished for not securing a kill!");
         } else if (args[1].equalsIgnoreCase("roll")) {
+            if (!LimitedLife.globalTimerActive) {
+                sender.sendMessage(ChatColor.DARK_RED + "The global timer must be active to roll the boogeyman!");
+                return true;
+            }
             if (rolling) return true;
             rolling = true;
             FileConfiguration config = LimitedLife.plugin.getConfig();
@@ -86,9 +104,9 @@ public class BoogeymanCommand {
             scheduler.runTaskLater(LimitedLife.plugin, () -> Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman is about to be chosen!"),(long) (rollDelayInMinutes*.90)*60*20);
             scheduler.runTaskLater(LimitedLife.plugin, () -> {
                 Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman is now being chosen!");
-                sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "3", Sound.BLOCK_NOTE_BLOCK_CHIME);
+                sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "3", Sound.BLOCK_NOTE_BLOCK_CHIME);
                 scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "2", Sound.BLOCK_NOTE_BLOCK_CHIME), 50);
-                scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "1", Sound.BLOCK_NOTE_BLOCK_CHIME), 100);
+                scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.RED + ChatColor.BOLD.toString() + "1", Sound.BLOCK_NOTE_BLOCK_CHIME), 100);
                 scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "You are..", Sound.BLOCK_NOTE_BLOCK_BANJO), 150);
                 scheduler.runTaskLater(LimitedLife.plugin, () -> {
                     if (max == min)

@@ -26,6 +26,9 @@ boogeyman:
   ## The amount of time lost when someone gets killed by a boogeyman (in seconds)
   time-lost-on-boogey-death: 7200
 
+  ## Determines whether red names can be chosen as a boogeyman
+  red-boogeymen: false
+
 
 
 

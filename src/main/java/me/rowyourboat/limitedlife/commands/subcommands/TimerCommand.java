@@ -21,10 +21,11 @@ public class TimerCommand {
         return true;
     }
 
-    private static void sendTitleToPlayer(String title, Player player) {
-        if (!player.isOnline()) return;
-        player.sendTitle(title, null, 10, 40, 10);
-        player.playSound(player, Sound.BLOCK_NOTE_BLOCK_CHIME, 10, 1);
+    private static void sendTitleToPlayers(String title, Sound sound) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.sendTitle(title, null, 10, 40, 10);
+            player.playSound(player, sound, 3, 1);
+        }
     }
 
     public static List<UUID> uuidTimerDisabledList = new ArrayList<>();
@@ -40,25 +41,19 @@ public class TimerCommand {
                     return true;
                 }
                 LimitedLife.globalTimerActive = true;
+                BukkitScheduler scheduler = Bukkit.getScheduler();
                 for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
                     if (LimitedLife.SaveHandler.getPlayerTimeLeft(offlinePlayer) <= -1) // -1 is the default value
                         LimitedLife.SaveHandler.setPlayerTimeLeft(offlinePlayer, LimitedLife.plugin.getConfig().getLong("start-time-in-hours")*(long)Math.pow(60,2));
 
-                    BukkitScheduler scheduler = Bukkit.getScheduler();
-
-                    Player player = offlinePlayer.getPlayer();
-                    if (player != null) {
-                        sendTitleToPlayer(ChatColor.GREEN + ChatColor.BOLD.toString() + "3", player);
-                        scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayer(ChatColor.YELLOW + ChatColor.BOLD.toString() + "2", player), 40);
-                        scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayer(ChatColor.RED + ChatColor.BOLD.toString() + "1", player), 80);
-                        scheduler.runTaskLater(LimitedLife.plugin, () -> {
-                            player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "The timer has begun!", null, 10, 40, 10);
-                            player.playSound(player, Sound.ITEM_GOAT_HORN_SOUND_2, 10, 1);
-                        }, 120);
-                    }
-
                     scheduler.runTaskLater(LimitedLife.plugin, () -> new PlayerTimerTask(offlinePlayer), 120);
                 }
+
+                sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "3", Sound.BLOCK_NOTE_BLOCK_CHIME);
+                scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "2", Sound.BLOCK_NOTE_BLOCK_CHIME), 40);
+                scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.RED + ChatColor.BOLD.toString() + "1", Sound.BLOCK_NOTE_BLOCK_CHIME), 80);
+                scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "The timer has begun!", Sound.ITEM_GOAT_HORN_SOUND_2), 120);
+
                 sender.sendMessage(ChatColor.DARK_GREEN + "You've started/resumed the timer for everyone!");
                 uuidTimerDisabledList.clear();
             } else {

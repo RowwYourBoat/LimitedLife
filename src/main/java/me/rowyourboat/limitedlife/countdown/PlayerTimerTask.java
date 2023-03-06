@@ -40,7 +40,7 @@ public class PlayerTimerTask {
             }
         };
 
-        timer.scheduleAtFixedRate(task, 1000, 1000);
+        timer.scheduleAtFixedRate(task, 250, 1000);
     }
 
 }
