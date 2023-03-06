@@ -6,11 +6,9 @@ import me.rowyourboat.limitedlife.util.SecondsToClockFormat;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -25,11 +23,11 @@ public class PlayerTimerTask {
                 if (!LimitedLife.globalTimerActive || TimerCommand.uuidTimerDisabledList.contains(offlinePlayer.getUniqueId())) this.cancel();
 
                 long timeLeftInSeconds = LimitedLife.SaveHandler.getPlayerTimeLeft(offlinePlayer);
-                LimitedLife.SaveHandler.setPlayerTimeLeft(offlinePlayer, timeLeftInSeconds-1);
-                if (timeLeftInSeconds - 1 <= -1)
-                    LimitedLife.SaveHandler.setPlayerTimeLeft(offlinePlayer, -1);
+                if (timeLeftInSeconds <= 0)
+                    LimitedLife.SaveHandler.setPlayerTimeLeft(offlinePlayer, 0);
                 else
                     LimitedLife.SaveHandler.setPlayerTimeLeft(offlinePlayer, timeLeftInSeconds-1);
+
                 if (offlinePlayer.isOnline()) {
                     Player player = Bukkit.getPlayer(offlinePlayer.getUniqueId());
                     if (player != null)

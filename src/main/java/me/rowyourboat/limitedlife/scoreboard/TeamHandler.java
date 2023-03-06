@@ -7,6 +7,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
 public class TeamHandler {
@@ -19,6 +20,8 @@ public class TeamHandler {
     private final Team grayName;
 
     public TeamHandler() {
+        ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
+        if (scoreboardManager == null) LimitedLife.plugin.getLogger().severe("Unable to locate the scoreboard manager! Have you initialized a world yet?");
         scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         scoreboard.getTeams().forEach(Team::unregister);
 
@@ -37,6 +40,8 @@ public class TeamHandler {
         grayName = scoreboard.registerNewTeam("gray");
         grayName.setCanSeeFriendlyInvisibles(true);
         grayName.setColor(ChatColor.GRAY);
+
+        Bukkit.getOnlinePlayers().forEach(player -> changeTeamAndGamemodeAccordingly(player, LimitedLife.SaveHandler.getPlayerTimeLeft(player)));
     }
 
     public void changeTeamAndGamemodeAccordingly(Player player, long timeLeft) {
@@ -46,20 +51,27 @@ public class TeamHandler {
                     team.removeEntry(player.getName());
             });
             player.setGameMode(GameMode.ADVENTURE);
+            LimitedLife.SaveHandler.removePlayerDeathMark(player);
         } else if (timeLeft == 0) {
             grayName.addEntry(player.getName());
             player.setGameMode(GameMode.SPECTATOR);
-            player.playSound(player, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10, 1);
-            Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + player.getName() + " ran out of time!");
+            if (LimitedLife.SaveHandler.getMarkedAsDeadList().contains(player.getUniqueId().toString())) {
+                player.playSound(player, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10, 1);
+                Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + player.getName() + " ran out of time!");
+            }
+            LimitedLife.SaveHandler.markPlayerAsDead(player);
         } else if (timeLeft < LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.red-name")) {
             redName.addEntry(player.getName());
             player.setGameMode(GameMode.SURVIVAL);
+            LimitedLife.SaveHandler.removePlayerDeathMark(player);
         } else if (timeLeft < LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.yellow-name")) {
             yellowName.addEntry(player.getName());
             player.setGameMode(GameMode.SURVIVAL);
+            LimitedLife.SaveHandler.removePlayerDeathMark(player);
         } else {
             greenName.addEntry(player.getName());
             player.setGameMode(GameMode.SURVIVAL);
+            LimitedLife.SaveHandler.removePlayerDeathMark(player);
         }
     }
 

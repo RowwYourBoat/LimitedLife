@@ -39,6 +39,7 @@ public final class LimitedLife extends JavaPlugin {
         plugin.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[LimitedLife] The plugin has been loaded!"
                 + "\nPlease run the command '/lf timer start' to get started, or to resume everyone's timer!"
                 + "\nRun '/lf boogeyman roll' to roll the boogeyman!"
+                + "\nRun '/lf help' for a list of all commands!"
         );
     }
 
@@ -47,5 +48,9 @@ public final class LimitedLife extends JavaPlugin {
         globalTimerActive = false;
         SaveHandler.save();
     }
+
+    // Sound.ENTITY_ENDER_DRAGON_DEATH = Chosen as Boogey and Failed Sound
+    // BLOCK_NOTE_BLOCK_DIDGERIDO = Not chosen as boogey and Cured Sound
+    // Sound.BLOCK_NOTE_BLOCK_CHIME = Countdown Sound
 
 }

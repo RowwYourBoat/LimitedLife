@@ -43,7 +43,9 @@ public class PlayerDeathEvents implements Listener {
 
         lastHitByMap.put(damageReceiverUUID, damageCauserUUID);
 
-        Bukkit.getScheduler().cancelTask(lastHitBySchedulerMap.get(damageReceiverUUID));
+        if (lastHitBySchedulerMap.get(damageReceiverUUID) != null)
+            Bukkit.getScheduler().cancelTask(lastHitBySchedulerMap.get(damageReceiverUUID));
+
         lastHitBySchedulerMap.remove(damageReceiverUUID);
         int schedulerInt = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> lastHitByMap.remove(damageReceiverUUID), 20*10); // 10 seconds
 
@@ -57,14 +59,14 @@ public class PlayerDeathEvents implements Listener {
 
         FileConfiguration config = plugin.getConfig();
 
-        List<UUID> boogeymenUUIDList = SaveHandler.getBoogeymenList();
+        List<String> boogeymenUUIDList = SaveHandler.getBoogeymenList();
         UUID killerUUID = lastHitByMap.get(deadPlayer.getUniqueId());
         if (killerUUID != null) {
             OfflinePlayer killerOfflinePlayer = Bukkit.getOfflinePlayer(killerUUID);
-            if (boogeymenUUIDList != null && boogeymenUUIDList.contains(killerUUID)) {
+            if (boogeymenUUIDList.contains(killerUUID.toString())) {
                 SaveHandler.addPlayerTime(killerOfflinePlayer, config.getLong("boogeyman.time-gain-on-boogey-kill"));
                 SaveHandler.sendTimeChangeTitle(killerOfflinePlayer.getPlayer(), ChatColor.GREEN + "+" + SecondsToClockFormat.convert(config.getLong("boogeyman.time-gain-on-boogey-kill"), false));
-                SaveHandler.cureBoogeyman(killerUUID);
+                SaveHandler.cureBoogeyman(killerUUID.toString());
                 timeLostInSeconds.put(deadPlayer.getUniqueId(), config.getLong("boogeyman.time-lost-on-boogey-death"));
             } else {
                 SaveHandler.addPlayerTime(killerOfflinePlayer, config.getLong("rewards.time-gain-on-kill"));

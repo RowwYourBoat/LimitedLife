@@ -1,24 +1,32 @@
 package me.rowyourboat.limitedlife.data;
 
 import me.rowyourboat.limitedlife.LimitedLife;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class SaveHandler {
 
-    private File saveFile;
-    private YamlConfiguration saveYaml;
+    private final File saveFile;
+    private final YamlConfiguration saveYaml;
 
     public SaveHandler() {
         saveFile = new File(LimitedLife.plugin.getDataFolder(), "data" + File.separator + "save.yml");
         saveYaml = YamlConfiguration.loadConfiguration(saveFile);
+        if (!saveYaml.contains("marked-as-dead-list")) {
+            saveYaml.set("marked-as-dead-list", new ArrayList<String>());
+            save();
+        }
     }
 
     public void save() {
@@ -27,15 +35,6 @@ public class SaveHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setBoogeymen(List<UUID> playerUUIDList) {
-        saveYaml.set("Boogeymen", playerUUIDList);
-        save();
-    }
-
-    public void cureBoogeyman(UUID boogeymanToCure) {
-
     }
 
     public void sendTimeChangeTitle(Player player, String title) {
@@ -62,14 +61,64 @@ public class SaveHandler {
         setPlayerTimeLeft(player, timeLeft+timeToAdd);
     }
 
-    @SuppressWarnings("unchecked")
-    public List<UUID> getBoogeymenList() {
-        if (!saveYaml.contains("Boogeymen")) return null;
-        return (List<UUID>) saveYaml.getList("Boogeymen");
+    public void markPlayerAsDead(OfflinePlayer player) {
+        String uuidString = player.getUniqueId().toString();
+        if (!getMarkedAsDeadList().contains(uuidString))
+            getMarkedAsDeadList().add(uuidString);
+        save();
+    }
+
+    public void removePlayerDeathMark(OfflinePlayer player) {
+        getMarkedAsDeadList().remove(player.getUniqueId().toString());
+        save();
+    }
+
+    public void setBoogeymen(List<UUID> playerUUIDList) {
+        saveYaml.set("Boogeymen", UUIDListToStringList(playerUUIDList));
+        save();
+    }
+
+    public void cureBoogeyman(String boogeymanToCureUUID) {
+        getBoogeymenList().remove(boogeymanToCureUUID);
+        Player player = Bukkit.getPlayer(UUID.fromString(boogeymanToCureUUID));
+        if (player != null) {
+            player.sendTitle(ChatColor.GREEN + "You've been cured!", null, 10, 40, 10);
+            player.playSound(player, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 3, 1);
+        }
+        save();
+    }
+
+    public void punishBoogeymen() {
+        getBoogeymenList().forEach(uuidString -> {
+            Player player = Bukkit.getPlayer(UUID.fromString(uuidString));
+            if (player != null) {
+                player.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "You have failed!", ChatColor.GRAY + "Your time has been lowered to the next colour!", 10, 60, 10);
+                player.playSound(player, Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 1);
+
+                long timeLeft = LimitedLife.SaveHandler.getPlayerTimeLeft(player);
+                if (timeLeft > LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.yellow-name"))
+                    LimitedLife.SaveHandler.setPlayerTimeLeft(player, LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.yellow-name"));
+                else if (timeLeft > LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.red-name"))
+                    LimitedLife.SaveHandler.setPlayerTimeLeft(player, LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.red-name"));
+                else
+                    LimitedLife.SaveHandler.setPlayerTimeLeft(player, 0);
+            }
+        });
+        getBoogeymenList().clear();
+        save();
+    }
+
+    public List<String> getBoogeymenList() {
+        if (!saveYaml.contains("Boogeymen")) return new ArrayList<>();
+        return saveYaml.getStringList("Boogeymen");
     }
 
     public long getPlayerTimeLeft(OfflinePlayer player) {
         return getPlayerSaveData(player).getInt("TimeRemaining");
+    }
+
+    public List<String> getMarkedAsDeadList() {
+        return saveYaml.getStringList("marked-as-dead-list");
     }
 
     public ConfigurationSection getPlayerSaveData(OfflinePlayer player) {
@@ -81,6 +130,12 @@ public class SaveHandler {
             newSection.set("TimeRemaining", -1);
             return newSection;
         }
+    }
+
+    private List<String> UUIDListToStringList(List<UUID> uuidList) {
+        List<String> stringList = new ArrayList<>();
+        uuidList.forEach(uuid -> stringList.add(uuid.toString()));
+        return stringList;
     }
 
 }

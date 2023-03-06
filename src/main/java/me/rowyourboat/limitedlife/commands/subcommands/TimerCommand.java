@@ -2,7 +2,6 @@ package me.rowyourboat.limitedlife.commands.subcommands;
 
 import me.rowyourboat.limitedlife.LimitedLife;
 import me.rowyourboat.limitedlife.countdown.PlayerTimerTask;
-import me.rowyourboat.limitedlife.data.SaveHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -58,7 +57,7 @@ public class TimerCommand {
                         }, 120);
                     }
 
-                    scheduler.runTaskLater(LimitedLife.plugin, () -> new PlayerTimerTask(player), 120);
+                    scheduler.runTaskLater(LimitedLife.plugin, () -> new PlayerTimerTask(offlinePlayer), 120);
                 }
                 sender.sendMessage(ChatColor.DARK_GREEN + "You've started/resumed the timer for everyone!");
                 uuidTimerDisabledList.clear();
