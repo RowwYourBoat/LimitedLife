@@ -78,11 +78,11 @@ anvil:
 
 
 name-colour-thresholds:
-  ## The amount of time the player needs to have left in order to become a red name (in seconds)
+  ## The amount of time the player needs to have less than in order to become a red name (in seconds)
   ## default: 28800 (8 hours)
   red-name: 28800
 
-  ## The amount of time the player needs to have left in order to become a yellow name (in seconds)
+  ## The amount of time the player needs to have less than in order to become a yellow name (in seconds)
   ## default: 57600 (16 hours)
   yellow-name: 57600
 
