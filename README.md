@@ -17,6 +17,26 @@ The server shouldn't be on 24/7. Instead, game sessions should be hosted, to mak
 **/lf boogeyman <roll|cure|punish|clear>** - Rolls the boogeyman, cures the specified player, punishes all boogeymen for not securing a kill, and clears the Boogeyman list.  
 **/lf modifytime <player> <+|->\<num><h|m|s>** - Adds/subtracts from the specified player's time in hours, minutes or seconds. (Last Argument Example: -3h)
 
+### Enchantment Limitations
+You may configure the plugin to limit the level on enchantments when combined in an anvil. This is set to level 1 by default.
+
+### Disabling Certain Items
+The Enchantment Table may be configured to be (un)craftable. You can also make it (un)breakable, and immortal when it drops as an item, meaning it won't despawn or take damage from anything.  
+Helmets are unobtainable by default, but may be enabled.  
+Bookshelves are unobtainable by default, but may be enabled.
+
+### Custom Recipes
+A few recipes have been altered/added in order to enhance your experience. They may be disabled if you see fit.  
+<br>
+**Paper TNT**  
+![image](https://user-images.githubusercontent.com/75913945/223511629-3582983f-d9ce-424d-aa5d-bbfe73bd37a6.png)  
+**Craftable Saddle**  
+![image](https://user-images.githubusercontent.com/75913945/223511868-851c41c6-a552-4989-91a0-b0446ad6d0ba.png)  
+**Craftable Name Tag**  
+![image](https://user-images.githubusercontent.com/75913945/223511972-1d59cc36-dec0-41ea-815a-a51129d232f5.png)  
+
+
+
 ### Documented Configuration File
 The plugin features a well documented and relatively detailed config file. The defaults of which may be found [here](https://github.com/RowwYourBoat/LimitedLife/blob/master/src/main/resources/config.yml).
 
