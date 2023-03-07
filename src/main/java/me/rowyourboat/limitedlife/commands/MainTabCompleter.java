@@ -18,6 +18,8 @@ public class MainTabCompleter implements TabCompleter {
         arguments.add("timer");
         arguments.add("boogeyman");
         arguments.add("modifytime");
+        arguments.add("reload");
+        arguments.add("help");
         return arguments;
     }
 
@@ -62,6 +64,14 @@ public class MainTabCompleter implements TabCompleter {
         return arguments;
     }
 
+    private List<String> getHelpCommandArgs() {
+        List<String> arguments = new ArrayList<>();
+        arguments.add("boogeyman");
+        arguments.add("modifytime");
+        arguments.add("timer");
+        return arguments;
+    }
+
     @Override
     public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String s, String[] args) {
         if (args.length == 1)
@@ -73,6 +83,8 @@ public class MainTabCompleter implements TabCompleter {
                 return getBoogeymanCommands();
             else if (args[0].equalsIgnoreCase("modifytime"))
                 return null;
+            else if (args[0].equalsIgnoreCase("help"))
+                return getHelpCommandArgs();
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("timer"))
                 return null;

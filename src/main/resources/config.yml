@@ -56,22 +56,23 @@ recipes:
 
 
 
-enchantments:
-  table-craftable: true
-
+enchantment-table:
+  craftable: true
 
   ## Only change the following two settings if you want the table to not be craftable!
-  table-breakable: true
+  breakable: true
 
   ## Makes every enchantment table on the ground immortal and unable to be despawned when enabled.
   ## E.x. it won't burn in lava and can't be blown up.
-  table-indestructible-on-drop: false
+  indestructible-on-drop: false
 
 
-  ## When enabled, enchantments can't be stacked to levels higher than the
-  ## max-level value in an anvil.
+
+
+## Determines whether enchantments will be nerfed when applied to an item.
+anvil:
   stacking-nerf: true
-  max-level: 1
+  level-limit: 1
 
 
 
@@ -90,4 +91,5 @@ name-colour-thresholds:
 
 custom-chat-format:
   enabled: false
+  ## Make sure to include 'player' and 'message' in the format, as they are placeholders!
   format: "player: message"

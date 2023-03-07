@@ -87,7 +87,7 @@ public class SaveHandler {
         getBoogeymenList().remove(boogeymanToCureUUID);
         Player player = Bukkit.getPlayer(UUID.fromString(boogeymanToCureUUID));
         if (player != null) {
-            player.sendTitle(ChatColor.GREEN + "You've been cured!", null, 10, 40, 10);
+            player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "You've been cured!", null, 10, 40, 10);
             player.playSound(player, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 3, 1);
         }
         save();

@@ -28,7 +28,7 @@ public class BoogeymanCommand {
     private static void sendTitleToPlayers(String title, Sound sound) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.sendTitle(title, null, 10, 40, 10);
-            player.playSound(player, sound, 3, 1);
+            player.playSound(player, sound, 1, 1);
         }
     }
 
