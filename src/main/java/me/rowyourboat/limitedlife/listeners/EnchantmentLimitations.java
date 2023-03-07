@@ -111,9 +111,10 @@ public class EnchantmentLimitations implements Listener {
             nerfedItem.setItemMeta(nerfedItemDamageAble);
         }
 
+        int levelLimit = getConfig().getInt("anvil.level-limit");
         for (Map.Entry<Enchantment, Integer> enchantment : enchantments.entrySet()) {
-            if (enchantment.getValue() > getConfig().getInt("anvil.level-limit")) {
-                nerfedEnchantments.put(enchantment.getKey(), 2);
+            if (enchantment.getValue() > levelLimit) {
+                nerfedEnchantments.put(enchantment.getKey(), levelLimit);
                 nerfedEnchantmentsMessage.append(enchantment.getKey().getKey().toString().replace("minecraft:", "")).append(", ");
             } else {
                 nerfedEnchantments.put(enchantment.getKey(), enchantment.getValue());
