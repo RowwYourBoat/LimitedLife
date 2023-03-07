@@ -41,5 +41,6 @@ A few recipes have been altered/added in order to enhance your experience. They 
 The plugin features a well documented and relatively detailed config file. The defaults of which may be found [here](https://github.com/RowwYourBoat/LimitedLife/blob/master/src/main/resources/config.yml).
 
 ## Additional Information
+When the global timer's active, offline players will still lose time.
 For support, please join my public [Limited Life Discord Server](https://discord.com/invite/PEsQSZVSwU) or contact me privately: Rowan#4321  
 Credits to [Grian](https://youtu.be/gzaIHdjLIyM) for coming up with the idea for Limited Life!
