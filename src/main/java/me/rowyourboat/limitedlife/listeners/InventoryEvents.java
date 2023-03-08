@@ -27,8 +27,17 @@ public class InventoryEvents implements Listener {
 
     private final JavaPlugin plugin;
 
+    private final List<Material> helmetTypes = new ArrayList<>();
+
     public InventoryEvents() {
         plugin = LimitedLife.plugin;
+
+        helmetTypes.add(Material.LEATHER_HELMET);
+        helmetTypes.add(Material.GOLDEN_HELMET);
+        helmetTypes.add(Material.IRON_HELMET);
+        helmetTypes.add(Material.CHAINMAIL_HELMET);
+        helmetTypes.add(Material.DIAMOND_HELMET);
+        helmetTypes.add(Material.NETHERITE_HELMET);
     }
 
     private FileConfiguration getConfig() {
@@ -38,14 +47,6 @@ public class InventoryEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void preventInventoryHelmetInteraction(InventoryClickEvent event) {
         if (!getConfig().getBoolean("recipes.disable-helmets")) return;
-
-        List<Material> helmetTypes = new ArrayList<>();
-        helmetTypes.add(Material.LEATHER_HELMET);
-        helmetTypes.add(Material.GOLDEN_HELMET);
-        helmetTypes.add(Material.IRON_HELMET);
-        helmetTypes.add(Material.CHAINMAIL_HELMET);
-        helmetTypes.add(Material.DIAMOND_HELMET);
-        helmetTypes.add(Material.NETHERITE_HELMET);
 
         Player player = (Player) event.getWhoClicked();
         ItemStack currentItem = event.getCurrentItem();
@@ -73,6 +74,16 @@ public class InventoryEvents implements Listener {
                 }
             }, 5);
         }
+    }
+
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void preventPickingUpHelmets(EntityPickupItemEvent event) {
+        if (!getConfig().getBoolean("recipes.disable-helmets")) return;
+        if (!(event.getEntity() instanceof Player)) return;
+
+        if (helmetTypes.contains(event.getItem().getItemStack().getType()))
+            event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
