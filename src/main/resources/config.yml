@@ -43,6 +43,19 @@ rewards:
 
 
 
+name-colour-thresholds:
+  ## The amount of time the player needs to have less than in order to become a red name (in seconds)
+  ## default: 28800 (8 hours)
+  red-name: 28800
+
+  ## The amount of time the player needs to have less than in order to become a yellow name (in seconds)
+  ## default: 57600 (16 hours)
+  yellow-name: 57600
+
+
+
+
+## Please note that while in creative mode, items won't be disabled properly!
 recipes:
   ## Creates a new recipe for tnt which replaces most of the gunpowder required with paper
   paper-tnt: true
@@ -50,6 +63,8 @@ recipes:
   disable-helmets: true
   ## Makes it so that bookshelves are unobtainable
   disable-bookshelves: true
+  ## Makes it so that golden apples, as well as enchanted golden apples, are unobtainable
+  disable-golden-apples: true
   craftable-saddle: true
   craftable-name-tag: true
 
@@ -77,14 +92,21 @@ anvil:
 
 
 
-name-colour-thresholds:
-  ## The amount of time the player needs to have less than in order to become a red name (in seconds)
-  ## default: 28800 (8 hours)
-  red-name: 28800
-
-  ## The amount of time the player needs to have less than in order to become a yellow name (in seconds)
-  ## default: 57600 (16 hours)
-  yellow-name: 57600
+## You may whitelist potions by adding their enum name to the list.
+## For help, refer to the wiki: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionType.html
+## Please note that this doesn't work properly while in creative mode!
+potion-whitelist:
+  enabled: true
+  list:
+    - WATER
+    - AWKWARD
+    - MUNDANE
+    - INVISIBILITY
+    - SPEED
+    - FIRE_RESISTANCE
+    - NIGHT_VISION
+    - JUMP
+    - WATER_BREATHING
 
 
 

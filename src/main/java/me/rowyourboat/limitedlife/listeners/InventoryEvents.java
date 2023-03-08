@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -13,8 +14,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +36,7 @@ public class InventoryEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void preventCraftingAndFindingHelmets(InventoryClickEvent event) {
+    public void preventInventoryHelmetInteraction(InventoryClickEvent event) {
         if (!getConfig().getBoolean("recipes.disable-helmets")) return;
 
         List<Material> helmetTypes = new ArrayList<>();
@@ -72,7 +76,7 @@ public class InventoryEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void preventCraftingBookshelves(InventoryClickEvent event) {
+    public void preventInventoryBookshelfInteraction(InventoryClickEvent event) {
         if (!getConfig().getBoolean("recipes.disable-bookshelves")) return;
 
         Player player = (Player) event.getWhoClicked();
@@ -92,6 +96,61 @@ public class InventoryEvents implements Listener {
 
         if (event.getItem().getItemStack().getType() == Material.BOOKSHELF)
             event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void preventInventoryGoldenAppleInteraction(InventoryClickEvent event) {
+        if (!getConfig().getBoolean("recipes.disable-golden-apples")) return;
+
+        Player player = (Player) event.getWhoClicked();
+        ItemStack currentItem = event.getCurrentItem();
+        if (currentItem != null) {
+            if (currentItem.getType() == Material.GOLDEN_APPLE || currentItem.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
+                event.setCancelled(true);
+                player.sendMessage(ChatColor.DARK_RED + "Golden apples are prohibited!");
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void preventPickingGoldenApples(EntityPickupItemEvent event) {
+        if (!getConfig().getBoolean("recipes.disable-golden-apples")) return;
+        if (!(event.getEntity() instanceof Player)) return;
+
+        Material materialType = event.getItem().getItemStack().getType();
+        if (materialType == Material.GOLDEN_APPLE || materialType == Material.ENCHANTED_GOLDEN_APPLE)
+            event.setCancelled(true);
+    }
+
+    @SuppressWarnings("unchecked")
+    @EventHandler
+    public void blockBannedPotions(InventoryClickEvent event) {
+        if (!getConfig().getBoolean("potion-whitelist.enabled"))
+            return;
+
+        ItemStack itemStack = event.getCurrentItem();
+        if (itemStack == null)
+            return;
+
+        if (itemStack.getType() == Material.POTION || itemStack.getType() == Material.SPLASH_POTION) {
+            PotionMeta potionMeta = (PotionMeta) itemStack.getItemMeta();
+            if (potionMeta == null) return;
+            PotionType potionType = potionMeta.getBasePotionData().getType();
+            List<String> potionWhitelist = (List<String>) getConfig().getList("potion-whitelist.list");
+            if (potionWhitelist == null) return;
+            System.out.println(potionType);
+            if (!potionWhitelist.contains(potionType.toString())) {
+                event.setCancelled(true);
+                itemStack.setType(Material.GLASS_BOTTLE);
+                Inventory clickedInv = event.getClickedInventory();
+                if (clickedInv == null)
+                    return;
+                for (HumanEntity viewer : clickedInv.getViewers()) {
+                    Player player = (Player) viewer;
+                    player.sendMessage(ChatColor.DARK_RED + "That potion is banned on this server!");
+                }
+            }
+        }
     }
 
 }
