@@ -6,6 +6,8 @@ import me.rowyourboat.limitedlife.data.SaveHandler;
 import me.rowyourboat.limitedlife.listeners.*;
 import me.rowyourboat.limitedlife.scoreboard.TeamHandler;
 import me.rowyourboat.limitedlife.util.CustomRecipes;
+import me.rowyourboat.limitedlife.util.bStatsCode;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -59,7 +61,16 @@ public final class LimitedLife extends JavaPlugin {
 
         Bukkit.getOnlinePlayers().forEach(CustomRecipes::grant);
 
+        new Metrics(plugin, bStatsCode.get());
 
+        new UpdateChecker(plugin, 0).getVersion(version -> {
+            if (this.getDescription().getVersion().equals(version)) {
+                getLogger().info("The plugin is up to date!");
+            } else {
+                getLogger().severe("There is a newer version available!  Running: " + this.getDescription().getVersion() + "  Newest: " + version);
+                getLogger().severe("You may download it here: https://modrinth.com/plugin/limited-life");
+            }
+        });
 
         if (getConfig().getInt("config-version") != configVersion) {
             getLogger().warning("Your configuration file is " + (configVersion - getConfig().getInt("config-version")) + " version(s) behind!");
