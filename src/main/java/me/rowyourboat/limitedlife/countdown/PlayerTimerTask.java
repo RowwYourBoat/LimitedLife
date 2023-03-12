@@ -1,7 +1,6 @@
 package me.rowyourboat.limitedlife.countdown;
 
 import me.rowyourboat.limitedlife.LimitedLife;
-import me.rowyourboat.limitedlife.commands.subcommands.TimerCommand;
 import me.rowyourboat.limitedlife.util.SecondsToClockFormat;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -20,7 +19,7 @@ public class PlayerTimerTask {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                if (!LimitedLife.globalTimerActive || TimerCommand.uuidTimerDisabledList.contains(offlinePlayer.getUniqueId())) this.cancel();
+                if (!LimitedLife.globalTimerActive || !LimitedLife.playersActiveTimerList.contains(offlinePlayer.getUniqueId())) {this.cancel(); return;}
 
                 long timeLeftInSeconds = LimitedLife.SaveHandler.getPlayerTimeLeft(offlinePlayer);
                 if (timeLeftInSeconds <= 0)

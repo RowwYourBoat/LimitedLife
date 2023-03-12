@@ -53,25 +53,33 @@ public class TeamHandler {
             player.setGameMode(GameMode.ADVENTURE);
             LimitedLife.SaveHandler.removePlayerDeathMark(player);
         } else if (timeLeft == 0) {
-            grayName.addEntry(player.getName());
-            player.setGameMode(GameMode.SPECTATOR);
-            if (!LimitedLife.SaveHandler.getMarkedAsDeadList().contains(player.getUniqueId().toString())) {
-                player.playSound(player, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10, 1);
-                Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + player.getName() + " ran out of time!");
+            if (!grayName.hasEntry(player.getName())) {
+                grayName.addEntry(player.getName());
+                player.setGameMode(GameMode.SPECTATOR);
+                if (!LimitedLife.SaveHandler.getMarkedAsDeadList().contains(player.getUniqueId().toString())) {
+                    player.playSound(player, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10, 1);
+                    Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + player.getName() + " ran out of time!");
+                }
+                LimitedLife.SaveHandler.markPlayerAsDead(player);
             }
-            LimitedLife.SaveHandler.markPlayerAsDead(player);
         } else if (timeLeft < LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.red-name")) {
-            redName.addEntry(player.getName());
-            player.setGameMode(GameMode.SURVIVAL);
-            LimitedLife.SaveHandler.removePlayerDeathMark(player);
+            if (!redName.hasEntry(player.getName())) {
+                redName.addEntry(player.getName());
+                player.setGameMode(GameMode.SURVIVAL);
+                LimitedLife.SaveHandler.removePlayerDeathMark(player);
+            }
         } else if (timeLeft < LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.yellow-name")) {
-            yellowName.addEntry(player.getName());
-            player.setGameMode(GameMode.SURVIVAL);
-            LimitedLife.SaveHandler.removePlayerDeathMark(player);
+            if (!yellowName.hasEntry(player.getName())) {
+                yellowName.addEntry(player.getName());
+                player.setGameMode(GameMode.SURVIVAL);
+                LimitedLife.SaveHandler.removePlayerDeathMark(player);
+            }
         } else {
-            greenName.addEntry(player.getName());
-            player.setGameMode(GameMode.SURVIVAL);
-            LimitedLife.SaveHandler.removePlayerDeathMark(player);
+            if (!greenName.hasEntry(player.getName())) {
+                greenName.addEntry(player.getName());
+                player.setGameMode(GameMode.SURVIVAL);
+                LimitedLife.SaveHandler.removePlayerDeathMark(player);
+            }
         }
     }
 

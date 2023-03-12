@@ -64,7 +64,7 @@ public class InventoryEvents implements Listener {
 
         Player player = event.getPlayer();
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            Bukkit.getScheduler().runTaskLater(LimitedLife.plugin, () -> {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 if (player.isOnline()) {
                     ItemStack helmet = player.getInventory().getHelmet();
                     if (helmet != null) {

@@ -10,10 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 public class TimerCommand {
 
     private static boolean invalidSyntax(CommandSender sender) {
@@ -27,8 +23,6 @@ public class TimerCommand {
             player.playSound(player, sound, 1, 1);
         }
     }
-
-    public static List<UUID> uuidTimerDisabledList = new ArrayList<>();
 
     public static boolean execute(CommandSender sender, String[] args) {
         if (args.length == 1)
@@ -46,7 +40,12 @@ public class TimerCommand {
                     if (LimitedLife.SaveHandler.getPlayerTimeLeft(offlinePlayer) <= -1) // -1 is the default value
                         LimitedLife.SaveHandler.setPlayerTimeLeft(offlinePlayer, LimitedLife.plugin.getConfig().getLong("start-time-in-hours")*(long)Math.pow(60,2));
 
-                    scheduler.runTaskLater(LimitedLife.plugin, () -> new PlayerTimerTask(offlinePlayer), 120);
+                    scheduler.runTaskLater(LimitedLife.plugin, () -> {
+                        if (!LimitedLife.playersActiveTimerList.contains(offlinePlayer.getUniqueId())) {
+                            LimitedLife.playersActiveTimerList.add(offlinePlayer.getUniqueId());
+                            new PlayerTimerTask(offlinePlayer);
+                        }
+                    }, 120);
                 }
 
                 sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "3", Sound.BLOCK_NOTE_BLOCK_CHIME);
@@ -55,7 +54,6 @@ public class TimerCommand {
                 scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "The timer has begun!", Sound.ITEM_GOAT_HORN_SOUND_2), 120);
 
                 sender.sendMessage(ChatColor.DARK_GREEN + "You've started/resumed the timer for everyone!");
-                uuidTimerDisabledList.clear();
             } else {
                 if (!LimitedLife.globalTimerActive) {
                     sender.sendMessage(ChatColor.DARK_RED + "You may only start the timer for individual players when the global timer is active!\n(/lf timer start)");
@@ -68,12 +66,12 @@ public class TimerCommand {
                     return true;
                 }
 
-                if (!uuidTimerDisabledList.contains(playerArg.getUniqueId())) {
+                if (LimitedLife.playersActiveTimerList.contains(playerArg.getUniqueId())) {
                     sender.sendMessage(ChatColor.DARK_RED + "That player already has an active timer!");
                     return true;
                 }
-                uuidTimerDisabledList.remove(playerArg.getUniqueId());
 
+                LimitedLife.playersActiveTimerList.add(playerArg.getUniqueId());
                 new PlayerTimerTask(playerArg);
                 sender.sendMessage(ChatColor.DARK_GREEN + "You've resumed " + playerArg.getName() + "'s timer!");
             }
@@ -83,9 +81,9 @@ public class TimerCommand {
                     sender.sendMessage(ChatColor.DARK_RED + "The global timer isn't active!");
                     return true;
                 }
+                LimitedLife.playersActiveTimerList.clear();
                 LimitedLife.globalTimerActive = false;
                 sender.sendMessage(ChatColor.DARK_GREEN + "You've paused the timer for everyone!");
-                uuidTimerDisabledList.clear();
             } else {
                 if (!LimitedLife.globalTimerActive) {
                     sender.sendMessage(ChatColor.DARK_RED + "You may only pause the timer for individual players when the global timer is enabled!\n(/lf timer start)");
@@ -98,11 +96,11 @@ public class TimerCommand {
                     return true;
                 }
 
-                if (uuidTimerDisabledList.contains(playerArg.getUniqueId())) {
+                if (!LimitedLife.playersActiveTimerList.contains(playerArg.getUniqueId())) {
                     sender.sendMessage(ChatColor.DARK_RED + "That player's timer has already been paused!");
                     return true;
                 }
-                uuidTimerDisabledList.add(playerArg.getUniqueId());
+                LimitedLife.playersActiveTimerList.remove(playerArg.getUniqueId());
                 sender.sendMessage(ChatColor.DARK_GREEN + "You've paused " + playerArg.getName() + "'s timer!");
             }
         } else if (args[1].equalsIgnoreCase("reset")) {
@@ -111,8 +109,11 @@ public class TimerCommand {
                 return true;
             }
             LimitedLife.globalTimerActive = false;
-            uuidTimerDisabledList.clear();
-            for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {LimitedLife.SaveHandler.setPlayerTimeLeft(offlinePlayer, -1);}
+            LimitedLife.playersActiveTimerList.clear();
+            Bukkit.getScheduler().runTaskLater(LimitedLife.plugin, () -> {
+                for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
+                    LimitedLife.SaveHandler.setPlayerTimeLeft(offlinePlayer, -1);}
+            }, 25);
             sender.sendMessage(ChatColor.DARK_GREEN + "You've wiped all player data!");
         } else
             return invalidSyntax(sender);

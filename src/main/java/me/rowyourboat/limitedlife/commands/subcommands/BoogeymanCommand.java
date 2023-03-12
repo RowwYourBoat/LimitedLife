@@ -80,7 +80,7 @@ public class BoogeymanCommand {
         SaveHandler SaveHandler = LimitedLife.SaveHandler;
 
         if (args[1].equalsIgnoreCase("clear")) {
-            SaveHandler.getBoogeymenList().forEach(SaveHandler::cureBoogeyman);
+            SaveHandler.cureAllBoogeymen();
             sender.sendMessage(ChatColor.DARK_GREEN + "You've cured all existing boogeymen!");
         } else if (args[1].equalsIgnoreCase("punish")) {
             SaveHandler.punishBoogeymen();

@@ -28,6 +28,10 @@ public class SaveHandler {
             saveYaml.set("marked-as-dead-list", new ArrayList<String>());
             save();
         }
+        if (!saveYaml.contains("Boogeymen")) {
+            saveYaml.set("Boogeymen", new ArrayList<String>());
+            save();
+        }
     }
 
     public void save() {
@@ -72,8 +76,10 @@ public class SaveHandler {
     public void removePlayerDeathMark(OfflinePlayer player) {
         String uuidString = player.getUniqueId().toString();
         if (getMarkedAsDeadList().contains(uuidString))
-            if (LimitedLife.globalTimerActive)
+            if (LimitedLife.globalTimerActive) {
+                LimitedLife.playersActiveTimerList.add(player.getUniqueId());
                 new PlayerTimerTask(player);
+            }
         getMarkedAsDeadList().remove(uuidString);
         save();
     }
@@ -90,6 +96,18 @@ public class SaveHandler {
             player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "You've been cured!", null, 10, 40, 10);
             player.playSound(player, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 3, 1);
         }
+        save();
+    }
+
+    public void cureAllBoogeymen() {
+        getBoogeymenList().forEach(uuidString -> {
+            Player player = Bukkit.getPlayer(uuidString);
+            if (player != null) {
+                player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "You've been cured!", null, 10, 40, 10);
+                player.playSound(player, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 3, 1);
+            }
+        });
+        getBoogeymenList().clear();
         save();
     }
 
