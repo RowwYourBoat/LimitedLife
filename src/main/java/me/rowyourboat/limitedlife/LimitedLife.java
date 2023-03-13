@@ -63,7 +63,7 @@ public final class LimitedLife extends JavaPlugin {
 
         new Metrics(plugin, bStatsCode.get());
 
-        new UpdateChecker(plugin, 0).getVersion(version -> {
+        new UpdateChecker(plugin, 108589).getVersion(version -> {
             if (this.getDescription().getVersion().equals(version)) {
                 getLogger().info("The plugin is up to date!");
             } else {
