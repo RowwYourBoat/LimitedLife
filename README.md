@@ -15,7 +15,7 @@ The server shouldn't be on 24/7. Instead, game sessions should be hosted, to mak
 **/lf reload** - Reloads the plugin and the its data files  
 **/lf timer <start|pause|reset> [player]** - Starts/Resumes and pauses the timer for everyone, or the specified player. Also resets timer data.
 **/lf modifytime <player> <+|->\<num><h|m|s>** - Adds/subtracts from the specified player's time in hours, minutes or seconds. (Last Argument Example: -3h)
-**/lf gettimee <player>** - Returns the amount of time the specified player has remaining.
+**/lf gettime <player>** - Returns the amount of time the specified player has remaining.
 **/lf boogeyman <roll|cure|punish|clear>** - Rolls the boogeyman, cures the specified player, punishes all boogeymen for not securing a kill, and clears the Boogeyman list.  
 
 ### Enchantment Limitations
