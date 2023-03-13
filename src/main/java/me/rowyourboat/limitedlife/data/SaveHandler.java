@@ -28,8 +28,8 @@ public class SaveHandler {
             saveYaml.set("marked-as-dead-list", new ArrayList<String>());
             save();
         }
-        if (!saveYaml.contains("Boogeymen")) {
-            saveYaml.set("Boogeymen", new ArrayList<String>());
+        if (!saveYaml.contains("boogeymen")) {
+            saveYaml.set("boogeymen", new ArrayList<String>());
             save();
         }
     }
@@ -85,7 +85,7 @@ public class SaveHandler {
     }
 
     public void setBoogeymen(List<UUID> playerUUIDList) {
-        saveYaml.set("Boogeymen", UUIDListToStringList(playerUUIDList));
+        saveYaml.set("boogeymen", UUIDListToStringList(playerUUIDList));
         save();
     }
 
@@ -133,8 +133,8 @@ public class SaveHandler {
 
     @SuppressWarnings("unchecked")
     public List<String> getBoogeymenList() {
-        if (!saveYaml.contains("Boogeymen")) return new ArrayList<>();
-        return (List<String>) saveYaml.getList("Boogeymen");
+        if (!saveYaml.contains("boogeymen")) return new ArrayList<>();
+        return (List<String>) saveYaml.getList("boogeymen");
     }
 
     public long getPlayerTimeLeft(OfflinePlayer player) {
