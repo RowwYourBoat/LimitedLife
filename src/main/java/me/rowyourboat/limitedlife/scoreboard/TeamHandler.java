@@ -83,4 +83,8 @@ public class TeamHandler {
         }
     }
 
+    public void clearTeamMembers() {
+        Bukkit.getOnlinePlayers().forEach(plr -> scoreboard.getTeams().forEach(team -> team.removeEntry(plr.getName())));
+    }
+
 }

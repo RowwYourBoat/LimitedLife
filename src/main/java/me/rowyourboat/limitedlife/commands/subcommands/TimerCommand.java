@@ -114,6 +114,7 @@ public class TimerCommand {
                 for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
                     LimitedLife.SaveHandler.setPlayerTimeLeft(offlinePlayer, -1);}
             }, 25);
+            LimitedLife.TeamHandler.clearTeamMembers();
             sender.sendMessage(ChatColor.DARK_GREEN + "You've wiped all player data!");
         } else
             return invalidSyntax(sender);

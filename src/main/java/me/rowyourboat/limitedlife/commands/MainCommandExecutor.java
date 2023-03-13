@@ -17,6 +17,8 @@ public class MainCommandExecutor implements CommandExecutor {
                 return BoogeymanCommand.execute(commandSender, args);
             else if (args[0].equalsIgnoreCase("modifytime"))
                 return ModifyTimeCommand.execute(commandSender, args);
+            else if (args[0].equalsIgnoreCase("gettime"))
+                return GetTimeCommand.execute(commandSender, args);
             else if (args[0].equalsIgnoreCase("reload"))
                 return ReloadCommand.execute(commandSender);
             else if (args[0].equalsIgnoreCase("help"))

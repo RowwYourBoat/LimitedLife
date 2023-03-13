@@ -18,6 +18,7 @@ public class MainTabCompleter implements TabCompleter {
         arguments.add("timer");
         arguments.add("boogeyman");
         arguments.add("modifytime");
+        arguments.add("gettime");
         arguments.add("reload");
         arguments.add("help");
         return arguments;
@@ -82,6 +83,8 @@ public class MainTabCompleter implements TabCompleter {
             else if (args[0].equalsIgnoreCase("boogeyman"))
                 return getBoogeymanCommands();
             else if (args[0].equalsIgnoreCase("modifytime"))
+                return null;
+            else if (args[0].equalsIgnoreCase("gettime"))
                 return null;
             else if (args[0].equalsIgnoreCase("help"))
                 return getHelpCommandArgs();
