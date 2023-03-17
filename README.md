@@ -12,7 +12,7 @@ The server shouldn't be on 24/7. Instead, game sessions should be hosted, to mak
 ## Plugin Features
 ### Commands
 **/lf help <boogeyman|modifytime|timer>** - Provides a detailed explanation of the specified command.  
-**/lf reload** - Reloads the plugin and the its data files  
+**/lf reload** - Reloads the plugin and its data files  
 **/lf timer <start|pause|reset> [player]** - Starts/Resumes and pauses the timer for everyone, or the specified player. Also resets timer data.  
 **/lf modifytime <player> <+|->\<num><h|m|s>** - Adds/subtracts from the specified player's time in hours, minutes or seconds. (Last Argument Example: -3h)  
 **/lf gettime <player>** - Returns the amount of time the specified player has remaining.  
