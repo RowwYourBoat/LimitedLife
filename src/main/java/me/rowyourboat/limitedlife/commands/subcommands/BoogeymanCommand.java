@@ -100,8 +100,10 @@ public class BoogeymanCommand {
 
             Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman will be chosen in " + rollDelayInMinutes + " minutes!");
             BukkitScheduler scheduler = Bukkit.getScheduler();
-            scheduler.runTaskLater(LimitedLife.plugin, () -> Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman will be chosen in " + rollDelayInMinutes/2 + " minutes!"), (rollDelayInMinutes/2)*60*20);
-            scheduler.runTaskLater(LimitedLife.plugin, () -> Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman is about to be chosen!"),(long) (rollDelayInMinutes*.90)*60*20);
+            if (config.getBoolean("boogeyman.reminders")) {
+                scheduler.runTaskLater(LimitedLife.plugin, () -> Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman will be chosen in " + rollDelayInMinutes / 2 + " minutes!"), (rollDelayInMinutes / 2) * 60 * 20);
+                scheduler.runTaskLater(LimitedLife.plugin, () -> Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman is about to be chosen!"), (long) (rollDelayInMinutes * .90) * 60 * 20);
+            }
             scheduler.runTaskLater(LimitedLife.plugin, () -> {
                 Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman is now being chosen!");
                 sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "3", Sound.BLOCK_NOTE_BLOCK_CHIME);

@@ -15,6 +15,10 @@ boogeyman:
   ## after running the command
   roll-delay-in-minutes: 10
 
+  ## Determines whether reminders will be sent out to everyone.
+  ## I recommend disabling this if the roll-delay-in-minutes is set to less than 10.
+  reminders: true
+
   ## The maximum and minimum amount of boogeymen that are able to be chosen
   ## Set both to the same value to force a certain amount
   amount-max: 1

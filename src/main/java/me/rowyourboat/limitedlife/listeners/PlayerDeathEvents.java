@@ -5,6 +5,7 @@ import me.rowyourboat.limitedlife.data.SaveHandler;
 import me.rowyourboat.limitedlife.util.SecondsToClockFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -87,6 +88,11 @@ public class PlayerDeathEvents implements Listener {
             timeLostInSeconds.remove(player.getUniqueId());
             SaveHandler.subtractPlayerTime(player, timeToSubtract);
             SaveHandler.sendTimeChangeTitle(player, ChatColor.RED + "-" + SecondsToClockFormat.convert(timeToSubtract, false));
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (player.isOnline())
+                    if (SaveHandler.getPlayerTimeLeft(player) == 0)
+                        player.setGameMode(GameMode.SPECTATOR);
+            }, 10);
         }
     }
 

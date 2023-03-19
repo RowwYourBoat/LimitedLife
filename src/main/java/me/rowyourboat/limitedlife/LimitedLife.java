@@ -68,13 +68,13 @@ public final class LimitedLife extends JavaPlugin {
                 getLogger().info("The plugin is up to date!");
             } else {
                 getLogger().severe("There is a newer version available!  Running: " + this.getDescription().getVersion() + "  Newest: " + version);
-                getLogger().severe("You may download it here: https://modrinth.com/plugin/limited-life");
+                getLogger().severe("You may download it here: https://www.spigotmc.org/resources/limited-life.108589/");
             }
         });
 
         if (getConfig().getInt("config-version") != configVersion) {
             getLogger().warning("Your configuration file is " + (configVersion - getConfig().getInt("config-version")) + " version(s) behind!");
-            getLogger().warning("To be able to access the newly added settings, please delete the current config.yml file and restart/reload the server!");
+            getLogger().warning("To be able to access the newly added settings, please delete the current config.yml file and reload the plugin/server!");
         }
     }
 
