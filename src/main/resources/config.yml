@@ -1,5 +1,5 @@
 ## Set to -1 in order to disable configuration update reminders
-config-version: 2
+config-version: 3
 
 
 
@@ -146,6 +146,9 @@ custom-chat-format:
 other:
   ## Determines whether a lighting sound will be played when someone runs out of time
   lightning-sound-on-final-death: true
+
+  ## Quick command to find out whether you're the boogeyman
+  am-i-the-boogeyman-command: true
 
   ## Determines whether a message will be sent out to all other admins whenever someone runs a command
   ## Example: [Alex: Added 30 minutes to Steve's timer]

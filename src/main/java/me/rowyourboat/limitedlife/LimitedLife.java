@@ -1,5 +1,6 @@
 package me.rowyourboat.limitedlife;
 
+import me.rowyourboat.limitedlife.commands.BoogeymanReminderCommand;
 import me.rowyourboat.limitedlife.commands.MainCommandExecutor;
 import me.rowyourboat.limitedlife.commands.MainTabCompleter;
 import me.rowyourboat.limitedlife.data.SaveHandler;
@@ -30,7 +31,7 @@ public final class LimitedLife extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        int configVersion = 2;
+        int configVersion = 3;
         plugin = this;
         globalTimerActive = false;
 
@@ -45,6 +46,9 @@ public final class LimitedLife extends JavaPlugin {
             limitedlifeCommand.setExecutor(new MainCommandExecutor());
             limitedlifeCommand.setTabCompleter(new MainTabCompleter());
         }
+        PluginCommand boogeyManReminderCommand = plugin.getCommand("amitheboogeyman");
+        if (boogeyManReminderCommand != null)
+            boogeyManReminderCommand.setExecutor(new BoogeymanReminderCommand());
 
         Bukkit.getPluginManager().registerEvents(new PlayerDeathEvents(), plugin);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinEvents(), plugin);

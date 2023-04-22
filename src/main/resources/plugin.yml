@@ -13,8 +13,15 @@ commands:
     usage: /lf help
     aliases:
       - lf
+  amitheboogeyman:
+    permission: limitedlife.amitheboogeyman
+    description: Shows you whether you're the boogeyman.
+    usage: /amitheboogeyman
 
 permissions:
   limitedlife.admin:
     default: op
     description: Grants permission to all sub-commands.
+  limitedlife.amitheboogeyman:
+    default: true
+    description: Grants permission to run the /amitheboogeyman command.
