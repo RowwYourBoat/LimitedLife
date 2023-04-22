@@ -1,12 +1,27 @@
 package me.rowyourboat.limitedlife.commands;
 
+import me.rowyourboat.limitedlife.LimitedLife;
 import me.rowyourboat.limitedlife.commands.subcommands.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class MainCommandExecutor implements CommandExecutor {
+
+    public static void commandFeedback(CommandSender sender, String str) {
+        if (!LimitedLife.plugin.getConfig().getBoolean("other.command-feedback")) return;
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.hasPermission("limitedlife.admin") && !player.getName().equalsIgnoreCase(sender.getName())) {
+                String finalMessage = ChatColor.GRAY + ChatColor.ITALIC.toString() + "[" + sender.getName() + ": " + str + "]";
+                player.sendMessage(finalMessage);
+                Bukkit.getConsoleSender().sendMessage(finalMessage);
+            }
+        }
+    }
 
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String s, String[] args) {

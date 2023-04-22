@@ -3,6 +3,7 @@ package me.rowyourboat.limitedlife.listeners;
 import me.rowyourboat.limitedlife.LimitedLife;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -18,6 +19,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -34,16 +36,24 @@ public class EnchantmentLimitations implements Listener {
     private final JavaPlugin plugin;
 
     public EnchantmentLimitations() {
-        plugin = LimitedLife.plugin;
+        this.plugin = LimitedLife.plugin;
     }
 
     private FileConfiguration getConfig() {
         return plugin.getConfig();
     }
 
+    public boolean playerIsInCreative(Inventory inv) {
+        for (HumanEntity viewer : inv.getViewers()) {
+            if (viewer.getGameMode() == GameMode.CREATIVE)
+                return true;
+        }
+        return false;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void preventCraftingEnchantmentTable(CraftItemEvent event) {
-        if (getConfig().getBoolean("enchantment-table.craftable")) return;
+        if (getConfig().getBoolean("enchantment-table.craftable") || playerIsInCreative(event.getInventory())) return;
 
         if (event.getRecipe().getResult().getType() == Material.ENCHANTING_TABLE)
             event.setCancelled(true);
@@ -51,7 +61,7 @@ public class EnchantmentLimitations implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void preventBreakingEnchantmentTable(BlockBreakEvent event) {
-        if (getConfig().getBoolean("enchantment-table.breakable")) return;
+        if (getConfig().getBoolean("enchantment-table.breakable") || event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
 
        if (event.getBlock().getType() == Material.ENCHANTING_TABLE)
            event.setCancelled(true);
@@ -137,7 +147,7 @@ public class EnchantmentLimitations implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void modifyIllegalEnchantments(PrepareAnvilEvent event) {
-        if (!plugin.getConfig().getBoolean("anvil.stacking-nerf"))
+        if (!plugin.getConfig().getBoolean("anvil.stacking-nerf") || playerIsInCreative(event.getInventory()))
             return;
 
         ItemStack resultItem = event.getResult();

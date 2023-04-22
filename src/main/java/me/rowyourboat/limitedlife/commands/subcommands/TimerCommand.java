@@ -1,7 +1,9 @@
 package me.rowyourboat.limitedlife.commands.subcommands;
 
 import me.rowyourboat.limitedlife.LimitedLife;
+import me.rowyourboat.limitedlife.commands.MainCommandExecutor;
 import me.rowyourboat.limitedlife.countdown.PlayerTimerTask;
+import me.rowyourboat.limitedlife.countdown.PluginTimerTask;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -38,7 +40,7 @@ public class TimerCommand {
                 BukkitScheduler scheduler = Bukkit.getScheduler();
                 for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
                     if (LimitedLife.SaveHandler.getPlayerTimeLeft(offlinePlayer) <= -1) // -1 is the default value
-                        LimitedLife.SaveHandler.setPlayerTimeLeft(offlinePlayer, LimitedLife.plugin.getConfig().getLong("start-time-in-hours")*(long)Math.pow(60,2));
+                        LimitedLife.SaveHandler.setPlayerTimeLeft(offlinePlayer, LimitedLife.plugin.getConfig().getLong("timer.start-time-in-hours")*(long)Math.pow(60,2));
 
                     scheduler.runTaskLater(LimitedLife.plugin, () -> {
                         if (!LimitedLife.playersActiveTimerList.contains(offlinePlayer.getUniqueId())) {
@@ -47,6 +49,7 @@ public class TimerCommand {
                         }
                     }, 120);
                 }
+                scheduler.runTaskLater(LimitedLife.plugin, PluginTimerTask::new, 120);
 
                 sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "3", Sound.BLOCK_NOTE_BLOCK_CHIME);
                 scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "2", Sound.BLOCK_NOTE_BLOCK_CHIME), 40);
@@ -54,6 +57,7 @@ public class TimerCommand {
                 scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "The timer has begun!", Sound.ITEM_GOAT_HORN_SOUND_2), 120);
 
                 sender.sendMessage(ChatColor.DARK_GREEN + "You've started/resumed the timer for everyone!");
+                MainCommandExecutor.commandFeedback(sender, "Resumed the timer for everyone");
             } else {
                 if (!LimitedLife.globalTimerActive) {
                     sender.sendMessage(ChatColor.DARK_RED + "You may only start the timer for individual players when the global timer is active!\n(/lf timer start)");
@@ -74,6 +78,7 @@ public class TimerCommand {
                 LimitedLife.playersActiveTimerList.add(playerArg.getUniqueId());
                 new PlayerTimerTask(playerArg);
                 sender.sendMessage(ChatColor.DARK_GREEN + "You've resumed " + playerArg.getName() + "'s timer!");
+                MainCommandExecutor.commandFeedback(sender, "Resumed " + playerArg.getName() + "'s timer!");
             }
         } else if (args[1].equalsIgnoreCase("pause")) {
             if (args.length == 2) {
@@ -84,6 +89,7 @@ public class TimerCommand {
                 LimitedLife.playersActiveTimerList.clear();
                 LimitedLife.globalTimerActive = false;
                 sender.sendMessage(ChatColor.DARK_GREEN + "You've paused the timer for everyone!");
+                MainCommandExecutor.commandFeedback(sender, "Paused the timer for everyone");
             } else {
                 if (!LimitedLife.globalTimerActive) {
                     sender.sendMessage(ChatColor.DARK_RED + "You may only pause the timer for individual players when the global timer is enabled!\n(/lf timer start)");
@@ -102,6 +108,7 @@ public class TimerCommand {
                 }
                 LimitedLife.playersActiveTimerList.remove(playerArg.getUniqueId());
                 sender.sendMessage(ChatColor.DARK_GREEN + "You've paused " + playerArg.getName() + "'s timer!");
+                MainCommandExecutor.commandFeedback(sender, "Paused " + playerArg.getName() + "'s timer");
             }
         } else if (args[1].equalsIgnoreCase("reset")) {
             if (args.length < 3 || (args[2] == null || !args[2].equalsIgnoreCase("confirm"))) {
@@ -113,9 +120,11 @@ public class TimerCommand {
             Bukkit.getScheduler().runTaskLater(LimitedLife.plugin, () -> {
                 for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
                     LimitedLife.SaveHandler.setPlayerTimeLeft(offlinePlayer, -1);}
+                LimitedLife.SaveHandler.getMarkedAsDeadList().clear();
             }, 25);
             LimitedLife.TeamHandler.clearTeamMembers();
             sender.sendMessage(ChatColor.DARK_GREEN + "You've wiped all player data!");
+            MainCommandExecutor.commandFeedback(sender, "Wiped all player data");
         } else
             return invalidSyntax(sender);
 

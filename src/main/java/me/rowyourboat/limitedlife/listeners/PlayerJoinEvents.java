@@ -14,7 +14,11 @@ public class PlayerJoinEvents implements Listener {
         Player player = event.getPlayer();
         long timeLeft = LimitedLife.SaveHandler.getPlayerTimeLeft(player);
         if (timeLeft == -1 && LimitedLife.globalTimerActive && !LimitedLife.playersActiveTimerList.contains(player.getUniqueId())) {
-            LimitedLife.SaveHandler.setPlayerTimeLeft(player, LimitedLife.plugin.getConfig().getLong("start-time-in-hours") * (long) Math.pow(60, 2));
+
+            if (LimitedLife.plugin.getConfig().getBoolean("timer.balanced-time-for-latecomers"))
+                LimitedLife.SaveHandler.setPlayerTimeLeft(player, LimitedLife.SaveHandler.getPluginTimeRemaining());
+            else LimitedLife.SaveHandler.setPlayerTimeLeft(player, LimitedLife.plugin.getConfig().getInt("timer.start-time-in-hours")*(long)Math.pow(60, 2));
+
             LimitedLife.playersActiveTimerList.add(player.getUniqueId());
             new PlayerTimerTask(player);
         } else if (LimitedLife.globalTimerActive && !LimitedLife.playersActiveTimerList.contains(player.getUniqueId())) {

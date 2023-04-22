@@ -26,7 +26,7 @@ public class ChatFormat implements Listener {
         String newFormat = getConfig().getString("custom-chat-format.format");
         if (newFormat == null) return;
         if (!newFormat.contains("player") || !newFormat.contains("message")) {
-            plugin.getLogger().warning("The custom chat format hasn't been set up correctly!\nMake sure to include 'player' and 'message' in the format!");
+            plugin.getLogger().severe("The custom chat format hasn't been set up correctly!\nMake sure to include 'player' and 'message' in the format!");
             return;
         }
         newFormat = newFormat.replace("player", "%1$s");

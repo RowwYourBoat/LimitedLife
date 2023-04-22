@@ -3,6 +3,7 @@ package me.rowyourboat.limitedlife.listeners;
 import me.rowyourboat.limitedlife.LimitedLife;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.HumanEntity;
@@ -44,9 +45,17 @@ public class InventoryEvents implements Listener {
         return plugin.getConfig();
     }
 
+    public boolean playerIsInCreative(Inventory inv) {
+        for (HumanEntity viewer : inv.getViewers()) {
+            if (viewer.getGameMode() == GameMode.CREATIVE)
+                return true;
+        }
+        return false;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void preventInventoryHelmetInteraction(InventoryClickEvent event) {
-        if (!getConfig().getBoolean("recipes.disable-helmets")) return;
+        if (!getConfig().getBoolean("recipes.helmets-unobtainable") || playerIsInCreative(event.getInventory())) return;
 
         Player player = (Player) event.getWhoClicked();
         ItemStack currentItem = event.getCurrentItem();
@@ -60,7 +69,7 @@ public class InventoryEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void preventEquippingHelmets(PlayerInteractEvent event) {
-        if (!getConfig().getBoolean("recipes.disable-helmets")) return;
+        if (!getConfig().getBoolean("recipes.helmets-unobtainable") || event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
 
         Player player = event.getPlayer();
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
@@ -79,7 +88,7 @@ public class InventoryEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void preventPickingUpHelmets(EntityPickupItemEvent event) {
-        if (!getConfig().getBoolean("recipes.disable-helmets")) return;
+        if (!getConfig().getBoolean("recipes.helmets-unobtainable")) return;
         if (!(event.getEntity() instanceof Player)) return;
 
         if (helmetTypes.contains(event.getItem().getItemStack().getType()))
@@ -88,7 +97,7 @@ public class InventoryEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void preventInventoryBookshelfInteraction(InventoryClickEvent event) {
-        if (!getConfig().getBoolean("recipes.disable-bookshelves")) return;
+        if (!getConfig().getBoolean("recipes.bookshelves-unobtainable") || playerIsInCreative(event.getInventory())) return;
 
         Player player = (Player) event.getWhoClicked();
         ItemStack currentItem = event.getCurrentItem();
@@ -102,7 +111,7 @@ public class InventoryEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void preventPickingUpBookshelves(EntityPickupItemEvent event) {
-        if (!getConfig().getBoolean("recipes.disable-bookshelves")) return;
+        if (!getConfig().getBoolean("recipes.bookshelves-unobtainable")) return;
         if (!(event.getEntity() instanceof Player)) return;
 
         if (event.getItem().getItemStack().getType() == Material.BOOKSHELF)
@@ -110,33 +119,61 @@ public class InventoryEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void preventInventoryGoldenAppleInteraction(InventoryClickEvent event) {
-        if (!getConfig().getBoolean("recipes.disable-golden-apples")) return;
+    public void preventInventoryNetheriteInteraction(InventoryClickEvent event) {
+        if (!getConfig().getBoolean("recipes.netherite-unobtainable") || playerIsInCreative(event.getInventory())) return;
 
         Player player = (Player) event.getWhoClicked();
         ItemStack currentItem = event.getCurrentItem();
         if (currentItem != null) {
-            if (currentItem.getType() == Material.GOLDEN_APPLE || currentItem.getType() == Material.ENCHANTED_GOLDEN_APPLE) {
+            if (currentItem.getType() == Material.NETHERITE_INGOT || currentItem.getType() == Material.NETHERITE_SCRAP) {
+                event.setCancelled(true);
+                player.sendMessage(ChatColor.DARK_RED + "Netherite is prohibited!");
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void preventPickingUpNetherite(EntityPickupItemEvent event) {
+        if (!getConfig().getBoolean("recipes.netherite-unobtainable")) return;
+        if (!(event.getEntity() instanceof Player)) return;
+
+        if (event.getItem().getItemStack().getType() == Material.NETHERITE_INGOT || event.getItem().getItemStack().getType() == Material.NETHERITE_SCRAP)
+            event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void preventInventoryGoldenAppleInteraction(InventoryClickEvent event) {
+        if (playerIsInCreative(event.getInventory())) return;
+
+        Player player = (Player) event.getWhoClicked();
+        ItemStack currentItem = event.getCurrentItem();
+        if (currentItem != null) {
+            Material itemType = currentItem.getType();
+            if (itemType == Material.GOLDEN_APPLE && getConfig().getBoolean("recipes.golden-apples-unobtainable")) {
                 event.setCancelled(true);
                 player.sendMessage(ChatColor.DARK_RED + "Golden apples are prohibited!");
+            } else if (itemType == Material.ENCHANTED_GOLDEN_APPLE && getConfig().getBoolean("recipes.enchanted-golden-apples-unobtainable")) {
+                event.setCancelled(true);
+                player.sendMessage(ChatColor.DARK_RED + "Enchanted golden apples are prohibited!");
             }
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void preventPickingGoldenApples(EntityPickupItemEvent event) {
-        if (!getConfig().getBoolean("recipes.disable-golden-apples")) return;
         if (!(event.getEntity() instanceof Player)) return;
 
         Material materialType = event.getItem().getItemStack().getType();
-        if (materialType == Material.GOLDEN_APPLE || materialType == Material.ENCHANTED_GOLDEN_APPLE)
+        if (materialType == Material.GOLDEN_APPLE && getConfig().getBoolean("recipes.golden-apples-unobtainable"))
+            event.setCancelled(true);
+        else if (materialType == Material.ENCHANTED_GOLDEN_APPLE && getConfig().getBoolean("recipes.enchanted-golden-apples-unobtainable"))
             event.setCancelled(true);
     }
 
     @SuppressWarnings("unchecked")
     @EventHandler
     public void blockBannedPotions(InventoryClickEvent event) {
-        if (!getConfig().getBoolean("potion-whitelist.enabled"))
+        if (!getConfig().getBoolean("potion-whitelist.enabled") || playerIsInCreative(event.getInventory()))
             return;
 
         ItemStack itemStack = event.getCurrentItem();

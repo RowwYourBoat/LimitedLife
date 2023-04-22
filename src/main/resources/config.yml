@@ -1,11 +1,16 @@
-## Don't change this value!
-config-version: 1
+## Set to -1 in order to disable configuration update reminders
+config-version: 2
 
 
 
 
-## The amount of hours everyone starts off with
-start-time-in-hours: 24
+timer:
+  ## The amount of hours everyone starts off with
+  start-time-in-hours: 24
+
+  ## When set to true, players who join the server late will have their time set to a fair
+  ## amount automatically
+  balanced-time-for-latecomers: true
 
 
 
@@ -31,7 +36,7 @@ boogeyman:
   time-lost-on-boogey-death: 7200
 
   ## Determines whether red names can be chosen as a boogeyman
-  red-boogeymen: false
+  red-boogeymen: true
 
 
 
@@ -40,9 +45,20 @@ penalties:
   ## The amount of time players lose upon dying (in seconds)
   time-lost-on-death: 3600
 
+  ## Determines whether players will lose time when killed by someone with the same
+  ## name colour as them (doesn't apply to red names)
+  subtract-time-on-death-same-colour: true
+
+
+
+
 rewards:
   ## The amount of time players upon killing someone (in seconds)
   time-gain-on-kill: 1800
+
+  ## Determines whether players will receive time when they kill someone with
+  ## the same name colour as them (doesn't apply to red names)
+  add-time-on-kill-same-colour: true
 
 
 
@@ -59,26 +75,30 @@ name-colour-thresholds:
 
 
 
-## Please note that while in creative mode, items won't be disabled properly!
+## Please note that the following settings only get applied while in survival mode. ###################### !!! ######################
 recipes:
+  ## The following five settings determine whether the listed items are craftable, able to be picked up, or able to be interacted with in an inventory
+  helmets-unobtainable: true
+  bookshelves-unobtainable: true
+  netherite-unobtainable: false
+  golden-apples-unobtainable: false
+  enchanted-golden-apples-unobtainable: true
+
   ## Creates a new recipe for tnt which replaces most of the gunpowder required with paper
   paper-tnt: true
-  ## Makes it so that helmets are unobtainable
-  disable-helmets: true
-  ## Makes it so that bookshelves are unobtainable
-  disable-bookshelves: true
-  ## Makes it so that golden apples, as well as enchanted golden apples, are unobtainable
-  disable-golden-apples: true
+
+  ## Determines whether saddles and/or name tags are craftable
   craftable-saddle: true
   craftable-name-tag: true
+  craftable-slimeball: false
 
 
 
-
+## Please note that the following settings only get applied while in survival mode. ###################### !!! ######################
 enchantment-table:
   craftable: true
 
-  ## Only change the following two settings if you want the table to not be craftable!
+  ## I recommend only changing the following two settings if you don't want the table to be craftable!
   breakable: true
 
   ## Makes every enchantment table on the ground immortal and unable to be despawned when enabled.
@@ -90,7 +110,7 @@ enchantment-table:
 
 ## Determines whether enchantments will be nerfed when applied to an item.
 anvil:
-  stacking-nerf: true
+  stacking-nerf: false
   level-limit: 1
 
 
@@ -98,9 +118,9 @@ anvil:
 
 ## You may whitelist potions by adding their enum name to the list.
 ## For help, refer to the wiki: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionType.html
-## Please note that this doesn't work properly while in creative mode!
+## Please note that the following settings only get applied while in survival mode. ###################### !!! ######################
 potion-whitelist:
-  enabled: true
+  enabled: false
   list:
     - WATER
     - AWKWARD
@@ -119,3 +139,18 @@ custom-chat-format:
   enabled: false
   ## Make sure to include 'player' and 'message' in the format, as they are placeholders!
   format: "player: message"
+
+
+
+
+other:
+  ## Determines whether a lighting sound will be played when someone runs out of time
+  lightning-sound-on-final-death: true
+
+  ## Determines whether a message will be sent out to all other admins whenever someone runs a command
+  ## Example: [Alex: Added 30 minutes to Steve's timer]
+  command-feedback: true
+
+  ## Determines whether the plugin should print out an update reminder upon every startup/reload
+  ## whenever there's one available
+  plugin-update-reminders: true

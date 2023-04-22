@@ -12,7 +12,7 @@ public class HelpCommand {
 
         helpPages.put("boogeyman", ChatColor.DARK_GREEN + ChatColor.BOLD.toString() + " \n \nBoogeyman Command Help" + ChatColor.RESET
 
-            + ChatColor.GREEN + "\n\n/lf boogeyman roll" + ChatColor.GRAY + " - Starts counting down from the configured value (boogeyman.roll-delay-in-minutes), and rolls the Boogeyman. This will also clear the current Boogeymen list automatically." + ChatColor.RESET
+            + ChatColor.GREEN + "\n\n/lf boogeyman roll [skiprolldelay]" + ChatColor.GRAY + " - Rolls the boogeyman after the specified amount of time (boogeyman.roll-delay-in-minutes), unless the 'skiprolldelay' value is specified. This will also clear the current Boogeymen list automatically." + ChatColor.RESET
             + ChatColor.GREEN + "\n\n/lf boogeyman cure <player>" + ChatColor.GRAY + " - Cures the specified player, even when offline. They will be notified (if online)." + ChatColor.RESET
             + ChatColor.GREEN + "\n\n/lf boogeyman punish" + ChatColor.GRAY + " - Punishes all existing Boogeymen for failing to secure a kill. This will lower them to the next colour." + ChatColor.RESET
             + ChatColor.GREEN + "\n\n/lf boogeyman clear" + ChatColor.GRAY + " - Cures all existing boogeymen. They will be notified."

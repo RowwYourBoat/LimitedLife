@@ -8,38 +8,11 @@ import org.bukkit.command.TabCompleter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 public class MainTabCompleter implements TabCompleter {
-
-    private List<String> getSubCommands() {
-        List<String> arguments = new ArrayList<>();
-        arguments.add("timer");
-        arguments.add("boogeyman");
-        arguments.add("modifytime");
-        arguments.add("gettime");
-        arguments.add("reload");
-        arguments.add("help");
-        return arguments;
-    }
-
-    private List<String> getTimerCommands() {
-        List<String> arguments = new ArrayList<>();
-        arguments.add("start");
-        arguments.add("pause");
-        arguments.add("reset");
-        return arguments;
-    }
-
-    private List<String> getBoogeymanCommands() {
-        List<String> arguments = new ArrayList<>();
-        arguments.add("roll");
-        arguments.add("cure");
-        arguments.add("clear");
-        arguments.add("punish");
-        return arguments;
-    }
 
     private List<String> getBoogeymanNames() {
         List<String> arguments = new ArrayList<>();
@@ -73,15 +46,20 @@ public class MainTabCompleter implements TabCompleter {
         return arguments;
     }
 
+    private List<String> stringToList(String string) {
+        String[] splitString = string.split(",");
+        return new ArrayList<>(Arrays.asList(splitString));
+    }
+
     @Override
     public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String s, String[] args) {
         if (args.length == 1)
-            return getSubCommands();
+            return stringToList("timer,boogeyman,modifytime,gettime,reload,help");
         else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("timer"))
-                return getTimerCommands();
+                return stringToList("start,pause,reset");
             else if (args[0].equalsIgnoreCase("boogeyman"))
-                return getBoogeymanCommands();
+                return stringToList("roll,cure,clear,punish");
             else if (args[0].equalsIgnoreCase("modifytime"))
                 return null;
             else if (args[0].equalsIgnoreCase("gettime"))
@@ -95,6 +73,8 @@ public class MainTabCompleter implements TabCompleter {
                 return getBoogeymanNames();
             else if (args[0].equalsIgnoreCase("modifytime"))
                 return getModifyTimeArgs(args);
+            else if (args[0].equalsIgnoreCase("boogeyman") && args[1].equalsIgnoreCase("roll"))
+                return stringToList("skiprolldelay");
         }
 
         return new ArrayList<>();

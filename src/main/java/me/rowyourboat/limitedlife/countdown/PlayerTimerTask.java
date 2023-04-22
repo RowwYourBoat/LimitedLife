@@ -7,13 +7,17 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class PlayerTimerTask {
 
+    private final JavaPlugin plugin;
+
     public PlayerTimerTask(OfflinePlayer offlinePlayer) {
+        this.plugin = LimitedLife.plugin;
         Timer timer = new Timer();
 
         TimerTask task = new TimerTask() {
@@ -32,7 +36,7 @@ public class PlayerTimerTask {
                     if (player != null)
                         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(SecondsToClockFormat.convert(timeLeftInSeconds, true)));
 
-                    Bukkit.getScheduler().runTask(LimitedLife.plugin, () -> LimitedLife.TeamHandler.changeTeamAndGamemodeAccordingly(offlinePlayer.getPlayer(), timeLeftInSeconds));
+                    Bukkit.getScheduler().runTask(plugin, () -> LimitedLife.TeamHandler.changeTeamAndGamemodeAccordingly(offlinePlayer.getPlayer(), timeLeftInSeconds));
                 }
 
                 if (timeLeftInSeconds <= 0) this.cancel();

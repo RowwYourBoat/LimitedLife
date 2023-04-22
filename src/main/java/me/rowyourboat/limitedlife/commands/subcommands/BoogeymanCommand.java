@@ -1,6 +1,7 @@
 package me.rowyourboat.limitedlife.commands.subcommands;
 
 import me.rowyourboat.limitedlife.LimitedLife;
+import me.rowyourboat.limitedlife.commands.MainCommandExecutor;
 import me.rowyourboat.limitedlife.data.SaveHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -75,6 +76,28 @@ public class BoogeymanCommand {
         rolling = false;
     }
 
+    private static void queueAndSendTitles() {
+        FileConfiguration config = LimitedLife.plugin.getConfig();
+        int max = config.getInt("boogeyman.amount-max") + 1;
+        int min = config.getInt("boogeyman.amount-min");
+
+        BukkitScheduler scheduler = Bukkit.getScheduler();
+        Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman is now being chosen!");
+        sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "3", Sound.BLOCK_NOTE_BLOCK_CHIME);
+        scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "2", Sound.BLOCK_NOTE_BLOCK_CHIME), 50);
+        scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.RED + ChatColor.BOLD.toString() + "1", Sound.BLOCK_NOTE_BLOCK_CHIME), 100);
+        scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "You are..", Sound.BLOCK_NOTE_BLOCK_BANJO), 150);
+        scheduler.runTaskLater(LimitedLife.plugin, () -> {
+            if (max == min)
+                rollBoogeyman(max);
+            else {
+                Random r = new Random();
+                int amount = (r.nextInt(max - min) + min);
+                rollBoogeyman(amount);
+            }
+        }, 200);
+    }
+
     public static boolean execute(CommandSender sender, String[] args) {
         if (args.length == 1) return invalidSyntax(sender);
         SaveHandler SaveHandler = LimitedLife.SaveHandler;
@@ -82,44 +105,11 @@ public class BoogeymanCommand {
         if (args[1].equalsIgnoreCase("clear")) {
             SaveHandler.cureAllBoogeymen();
             sender.sendMessage(ChatColor.DARK_GREEN + "You've cured all existing boogeymen!");
+            MainCommandExecutor.commandFeedback(sender, "Cured all existing boogeymen");
         } else if (args[1].equalsIgnoreCase("punish")) {
             SaveHandler.punishBoogeymen();
             sender.sendMessage(ChatColor.DARK_GREEN + "The existing boogeymen have all been punished for not securing a kill!");
-        } else if (args[1].equalsIgnoreCase("roll")) {
-            if (!LimitedLife.globalTimerActive) {
-                sender.sendMessage(ChatColor.DARK_RED + "The global timer must be active to roll the boogeyman!");
-                return true;
-            }
-            if (rolling) return true;
-            rolling = true;
-            FileConfiguration config = LimitedLife.plugin.getConfig();
-            int max = config.getInt("boogeyman.amount-max")+1;
-            int min = config.getInt("boogeyman.amount-min");
-
-            long rollDelayInMinutes = LimitedLife.plugin.getConfig().getLong("boogeyman.roll-delay-in-minutes");
-
-            Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman will be chosen in " + rollDelayInMinutes + " minutes!");
-            BukkitScheduler scheduler = Bukkit.getScheduler();
-            if (config.getBoolean("boogeyman.reminders")) {
-                scheduler.runTaskLater(LimitedLife.plugin, () -> Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman will be chosen in " + rollDelayInMinutes / 2 + " minutes!"), (rollDelayInMinutes / 2) * 60 * 20);
-                scheduler.runTaskLater(LimitedLife.plugin, () -> Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman is about to be chosen!"), (long) (rollDelayInMinutes * .90) * 60 * 20);
-            }
-            scheduler.runTaskLater(LimitedLife.plugin, () -> {
-                Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman is now being chosen!");
-                sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "3", Sound.BLOCK_NOTE_BLOCK_CHIME);
-                scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "2", Sound.BLOCK_NOTE_BLOCK_CHIME), 50);
-                scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.RED + ChatColor.BOLD.toString() + "1", Sound.BLOCK_NOTE_BLOCK_CHIME), 100);
-                scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "You are..", Sound.BLOCK_NOTE_BLOCK_BANJO), 150);
-                scheduler.runTaskLater(LimitedLife.plugin, () -> {
-                    if (max == min)
-                        rollBoogeyman(max);
-                    else {
-                        Random r = new Random();
-                        int amount = (r.nextInt(max - min) + min);
-                        rollBoogeyman(amount);
-                    }
-                }, 200);
-            }, rollDelayInMinutes*60*20);
+            MainCommandExecutor.commandFeedback(sender, "Punished all remaining boogeymen");
         } else if (args[1].equalsIgnoreCase("cure")) {
             if (args.length < 3)
                 return invalidSyntax(sender);
@@ -142,8 +132,41 @@ public class BoogeymanCommand {
 
             SaveHandler.cureBoogeyman(finalOfflinePlayer.getUniqueId().toString());
             sender.sendMessage(ChatColor.DARK_GREEN + "You've successfully cured " + finalOfflinePlayer.getName() + "!");
-        }
+            MainCommandExecutor.commandFeedback(sender, "Cured " + finalOfflinePlayer.getName());
+        } else if (args[1].equalsIgnoreCase("roll")) {
 
+            if (!LimitedLife.globalTimerActive) {
+                sender.sendMessage(ChatColor.DARK_RED + "The global timer must be active to roll the boogeyman!");
+                return true;
+            }
+
+            if (rolling) return true;
+            rolling = true;
+            MainCommandExecutor.commandFeedback(sender, "Rolled the boogeyman");
+
+            FileConfiguration config = LimitedLife.plugin.getConfig();
+
+            final long rollDelayInMinutes;
+            if (args.length == 3 && args[2].equalsIgnoreCase("skiprolldelay"))
+                rollDelayInMinutes = 0;
+            else
+                rollDelayInMinutes = LimitedLife.plugin.getConfig().getLong("boogeyman.roll-delay-in-minutes");
+
+
+            if (rollDelayInMinutes != 0) {
+
+                Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman will be chosen in " + rollDelayInMinutes + " minutes!");
+                BukkitScheduler scheduler = Bukkit.getScheduler();
+                if (config.getBoolean("boogeyman.reminders")) {
+                    scheduler.runTaskLater(LimitedLife.plugin, () -> Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman will be chosen in " + rollDelayInMinutes / 2 + " minutes!"), (rollDelayInMinutes / 2) * 60 * 20);
+                    scheduler.runTaskLater(LimitedLife.plugin, () -> Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman is about to be chosen!"), (long) (rollDelayInMinutes * .90) * 60 * 20);
+                }
+                scheduler.runTaskLater(LimitedLife.plugin, BoogeymanCommand::queueAndSendTitles, rollDelayInMinutes * 60 * 20);
+
+            } else
+                queueAndSendTitles();
+
+        }
         return true;
     }
 

@@ -70,9 +70,28 @@ public class PlayerDeathEvents implements Listener {
                 SaveHandler.cureBoogeyman(killerUUID.toString());
                 timeLostInSeconds.put(deadPlayer.getUniqueId(), config.getLong("boogeyman.time-lost-on-boogey-death"));
             } else {
-                SaveHandler.addPlayerTime(killerOfflinePlayer, config.getLong("rewards.time-gain-on-kill"));
-                SaveHandler.sendTimeChangeTitle(killerOfflinePlayer.getPlayer(), ChatColor.GREEN + "+" + SecondsToClockFormat.convert(config.getLong("rewards.time-gain-on-kill"), false));
-                timeLostInSeconds.put(deadPlayer.getUniqueId(), config.getLong("penalties.time-lost-on-death"));
+                String killerTeamName = SaveHandler.convertTimeToTeamName(SaveHandler.getPlayerTimeLeft(killerOfflinePlayer));
+                String victimTeamName = SaveHandler.convertTimeToTeamName(SaveHandler.getPlayerTimeLeft(deadPlayer));
+
+                if (killerTeamName.equalsIgnoreCase("RED") && victimTeamName.equalsIgnoreCase("RED")){
+                    rewardTime(killerOfflinePlayer);
+                    timeLostInSeconds.put(deadPlayer.getUniqueId(), config.getLong("penalties.time-lost-on-death"));
+                    return;
+                }
+
+                if (killerTeamName.equalsIgnoreCase(victimTeamName)) {
+
+                    if (config.getBoolean("rewards.add-time-on-kill-same-colour"))
+                        rewardTime(killerOfflinePlayer);
+
+                    if (config.getBoolean("penalties.subtract-time-on-death-same-colour"))
+                        timeLostInSeconds.put(deadPlayer.getUniqueId(), config.getLong("penalties.time-lost-on-death"));
+
+                } else {
+                    rewardTime(killerOfflinePlayer);
+                    timeLostInSeconds.put(deadPlayer.getUniqueId(), config.getLong("penalties.time-lost-on-death"));
+                }
+
             }
         } else {
             timeLostInSeconds.put(deadPlayer.getUniqueId(), config.getLong("penalties.time-lost-on-death"));
@@ -94,6 +113,11 @@ public class PlayerDeathEvents implements Listener {
                         player.setGameMode(GameMode.SPECTATOR);
             }, 10);
         }
+    }
+
+    public void rewardTime(OfflinePlayer killerOfflinePlayer) {
+        SaveHandler.addPlayerTime(killerOfflinePlayer, LimitedLife.plugin.getConfig().getLong("rewards.time-gain-on-kill"));
+        SaveHandler.sendTimeChangeTitle(killerOfflinePlayer.getPlayer(), ChatColor.GREEN + "+" + SecondsToClockFormat.convert(LimitedLife.plugin.getConfig().getLong("rewards.time-gain-on-kill"), false));
     }
 
 }

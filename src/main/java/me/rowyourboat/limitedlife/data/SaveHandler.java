@@ -9,6 +9,7 @@ import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,11 +19,14 @@ import java.util.UUID;
 
 public class SaveHandler {
 
+    private final JavaPlugin plugin;
+
     private final File saveFile;
     private final YamlConfiguration saveYaml;
 
     public SaveHandler() {
-        saveFile = new File(LimitedLife.plugin.getDataFolder(), "data" + File.separator + "save.yml");
+        this.plugin = LimitedLife.plugin;
+        saveFile = new File(plugin.getDataFolder(), "data" + File.separator + "save.yml");
         saveYaml = YamlConfiguration.loadConfiguration(saveFile);
         if (!saveYaml.contains("marked-as-dead-list")) {
             saveYaml.set("marked-as-dead-list", new ArrayList<String>());
@@ -30,6 +34,35 @@ public class SaveHandler {
         }
         if (!saveYaml.contains("boogeymen")) {
             saveYaml.set("boogeymen", new ArrayList<String>());
+            save();
+        }
+        if (!saveYaml.contains("plugin-timer")) {
+
+            boolean foundPlayerData = false;
+            String mostTimeRemainingUUIDString = null;
+            for (String str : saveYaml.getValues(false).keySet()) {
+                if (saveYaml.isConfigurationSection(str)) {
+                    foundPlayerData = true;
+                    if (mostTimeRemainingUUIDString == null)
+                        mostTimeRemainingUUIDString = str;
+                    else {
+                        ConfigurationSection currentPlayerData = saveYaml.getConfigurationSection(str);
+                        ConfigurationSection bestPlayerData = saveYaml.getConfigurationSection(mostTimeRemainingUUIDString);
+                        if (currentPlayerData != null && bestPlayerData != null) {
+                            if (currentPlayerData.getLong("TimeRemaining") > bestPlayerData.getLong("TimeRemaining"))
+                                mostTimeRemainingUUIDString = str;
+                        }
+                    }
+                }
+            }
+
+            if (foundPlayerData) {
+                ConfigurationSection bestPlayerData = saveYaml.getConfigurationSection(mostTimeRemainingUUIDString);
+                if (bestPlayerData != null)
+                    saveYaml.set("plugin-timer", bestPlayerData.getLong("TimeRemaining"));
+            } else
+                saveYaml.set("plugin-timer", plugin.getConfig().getLong("timer.start-time-in-hours")*(long)Math.pow(60,2));
+
             save();
         }
     }
@@ -119,16 +152,24 @@ public class SaveHandler {
                 player.playSound(player, Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 1);
 
                 long timeLeft = LimitedLife.SaveHandler.getPlayerTimeLeft(player);
-                if (timeLeft > LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.yellow-name"))
-                    LimitedLife.SaveHandler.setPlayerTimeLeft(player, LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.yellow-name"));
-                else if (timeLeft > LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.red-name"))
-                    LimitedLife.SaveHandler.setPlayerTimeLeft(player, LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.red-name"));
+                if (timeLeft > plugin.getConfig().getInt("name-colour-thresholds.yellow-name"))
+                    LimitedLife.SaveHandler.setPlayerTimeLeft(player, plugin.getConfig().getInt("name-colour-thresholds.yellow-name"));
+                else if (timeLeft > plugin.getConfig().getInt("name-colour-thresholds.red-name"))
+                    LimitedLife.SaveHandler.setPlayerTimeLeft(player, plugin.getConfig().getInt("name-colour-thresholds.red-name"));
                 else
                     LimitedLife.SaveHandler.setPlayerTimeLeft(player, 0);
             }
         });
         getBoogeymenList().clear();
         save();
+    }
+
+    public void countDownPluginSecond() {
+        saveYaml.set("plugin-timer", getPluginTimeRemaining()-1);
+    }
+
+    public long getPluginTimeRemaining() {
+        return saveYaml.getLong("plugin-timer");
     }
 
     @SuppressWarnings("unchecked")
@@ -139,6 +180,16 @@ public class SaveHandler {
 
     public long getPlayerTimeLeft(OfflinePlayer player) {
         return getPlayerSaveData(player).getInt("TimeRemaining");
+    }
+
+
+    public String convertTimeToTeamName(long time) {
+        if (time > plugin.getConfig().getLong("name-colour-thresholds.yellow-name"))
+            return "GREEN";
+        else if (time > plugin.getConfig().getLong("name-colour-thresholds.red-name"))
+            return "YELLOW";
+        else
+            return "RED";
     }
 
     @SuppressWarnings("unchecked")

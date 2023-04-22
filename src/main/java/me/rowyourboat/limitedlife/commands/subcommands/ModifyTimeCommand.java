@@ -1,6 +1,7 @@
 package me.rowyourboat.limitedlife.commands.subcommands;
 
 import me.rowyourboat.limitedlife.LimitedLife;
+import me.rowyourboat.limitedlife.commands.MainCommandExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -47,19 +48,33 @@ public class ModifyTimeCommand {
         else return invalidSyntax(sender);
 
         if (subtract) {
-            if (timeType.equalsIgnoreCase("h"))
-                LimitedLife.SaveHandler.subtractPlayerTime(player, timeAmountToModify*60*60);
-            else if (timeType.equalsIgnoreCase("m"))
-                LimitedLife.SaveHandler.subtractPlayerTime(player, timeAmountToModify*60);
-            else LimitedLife.SaveHandler.subtractPlayerTime(player, timeAmountToModify);
-            sender.sendMessage(ChatColor.DARK_GREEN + "You've subtracted " + timeAmountToModify + " hours/minutes/seconds of time from " + player.getName() + "'s timer!");
+            if (timeType.equalsIgnoreCase("h")) {
+                LimitedLife.SaveHandler.subtractPlayerTime(player, timeAmountToModify * 60 * 60);
+                sender.sendMessage(ChatColor.DARK_GREEN + "You've subtracted " + timeAmountToModify + " hours from " + player.getName() + "'s timer!");
+                MainCommandExecutor.commandFeedback(sender, "Subtracted " + timeAmountToModify + " hours from " + player.getName() + "'s timer");
+            } else if (timeType.equalsIgnoreCase("m")) {
+                LimitedLife.SaveHandler.subtractPlayerTime(player, timeAmountToModify * 60);
+                sender.sendMessage(ChatColor.DARK_GREEN + "You've subtracted " + timeAmountToModify + " minutes from " + player.getName() + "'s timer!");
+                MainCommandExecutor.commandFeedback(sender, "Subtracted " + timeAmountToModify + " minutes from " + player.getName() + "'s timer");
+            } else {
+                LimitedLife.SaveHandler.subtractPlayerTime(player, timeAmountToModify);
+                sender.sendMessage(ChatColor.DARK_GREEN + "You've subtracted " + timeAmountToModify + " seconds from " + player.getName() + "'s timer!");
+                MainCommandExecutor.commandFeedback(sender, "Subtracted " + timeAmountToModify + " seconds from " + player.getName() + "'s timer");
+            }
         } else {
-            if (timeType.equalsIgnoreCase("h"))
-                LimitedLife.SaveHandler.addPlayerTime(player, timeAmountToModify*60*60);
-            else if (timeType.equalsIgnoreCase("m"))
-                LimitedLife.SaveHandler.addPlayerTime(player, timeAmountToModify*60);
-            else LimitedLife.SaveHandler.addPlayerTime(player, timeAmountToModify);
-            sender.sendMessage(ChatColor.DARK_GREEN + "You've added " + timeAmountToModify + " hours/minutes/seconds of time to " + player.getName() + "'s timer!");
+            if (timeType.equalsIgnoreCase("h")) {
+                LimitedLife.SaveHandler.addPlayerTime(player, timeAmountToModify * 60 * 60);
+                sender.sendMessage(ChatColor.DARK_GREEN + "You've added " + timeAmountToModify + " hours to " + player.getName() + "'s timer!");
+                MainCommandExecutor.commandFeedback(sender, "Added " + timeAmountToModify + " hours to " + player.getName() + "'s timer");
+            } else if (timeType.equalsIgnoreCase("m")) {
+                LimitedLife.SaveHandler.addPlayerTime(player, timeAmountToModify * 60);
+                sender.sendMessage(ChatColor.DARK_GREEN + "You've added " + timeAmountToModify + " minutes to " + player.getName() + "'s timer!");
+                MainCommandExecutor.commandFeedback(sender, "Added " + timeAmountToModify + " minutes to " + player.getName() + "'s timer");
+            } else {
+                LimitedLife.SaveHandler.addPlayerTime(player, timeAmountToModify);
+                sender.sendMessage(ChatColor.DARK_GREEN + "You've added " + timeAmountToModify + " minutes to " + player.getName() + "'s timer!");
+                MainCommandExecutor.commandFeedback(sender, "Added " + timeAmountToModify + " minutes to " + player.getName() + "'s timer");
+            }
             if (LimitedLife.SaveHandler.getPlayerTimeLeft(player) > 0)
                 LimitedLife.SaveHandler.removePlayerDeathMark(player);
         }

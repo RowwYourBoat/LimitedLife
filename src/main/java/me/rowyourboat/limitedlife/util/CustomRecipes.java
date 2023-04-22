@@ -52,6 +52,22 @@ public class CustomRecipes {
             Bukkit.addRecipe(paper_tntShapedRecipe);
             namespacedKeyList.add(paper_tntShapedRecipe.getKey());
         }
+
+        if (LimitedLife.plugin.getConfig().getBoolean("recipes.craftable-slimeball")) {
+            ShapedRecipe slimeballShapedRecipe = new ShapedRecipe(new NamespacedKey(LimitedLife.plugin, "craftable_slimeball"), new ItemStack(Material.SLIME_BALL, 3));
+            slimeballShapedRecipe.shape(
+                    "XBX",
+                    "BSB",
+                    "XWX"
+            );
+            slimeballShapedRecipe.setIngredient('B', Material.BONE_MEAL);
+            slimeballShapedRecipe.setIngredient('S', Material.SUGAR_CANE);
+            slimeballShapedRecipe.setIngredient('W', Material.WATER_BUCKET);
+            slimeballShapedRecipe.setIngredient('X', Material.AIR);
+            Bukkit.addRecipe(slimeballShapedRecipe);
+            namespacedKeyList.add(slimeballShapedRecipe.getKey());
+        }
+
     }
 
     public void grant(Player player) {

@@ -30,7 +30,7 @@ public final class LimitedLife extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        int configVersion = 1;
+        int configVersion = 2;
         plugin = this;
         globalTimerActive = false;
 
@@ -63,19 +63,21 @@ public final class LimitedLife extends JavaPlugin {
 
         new Metrics(plugin, bStatsCode.get());
 
-        new UpdateChecker(plugin, 108589).getVersion(version -> {
-            if (this.getDescription().getVersion().equals(version)) {
-                getLogger().info("The plugin is up to date!");
-            } else {
-                getLogger().severe("There is a newer version available!  Running: " + this.getDescription().getVersion() + "  Newest: " + version);
-                getLogger().severe("You may download it here: https://www.spigotmc.org/resources/limited-life.108589/");
-            }
-        });
+        if (getConfig().getBoolean("other.plugin-update-reminders"))
+            new UpdateChecker(plugin, 108589).getVersion(version -> {
+                if (this.getDescription().getVersion().equals(version)) {
+                    getLogger().info("The plugin is up to date!");
+                } else {
+                    getLogger().warning("There is a newer version available!  Running: " + this.getDescription().getVersion() + "  Newest: " + version);
+                    getLogger().warning("You may download it here: https://www.spigotmc.org/resources/limited-life.108589/");
+                }
+            });
 
-        if (getConfig().getInt("config-version") != configVersion) {
-            getLogger().warning("Your configuration file is " + (configVersion - getConfig().getInt("config-version")) + " version(s) behind!");
-            getLogger().warning("To be able to access the newly added settings, please delete the current config.yml file and reload the plugin/server!");
-        }
+        if (getConfig().getInt("config-version") != -1)
+            if (getConfig().getInt("config-version") != configVersion) {
+                getLogger().warning("Your configuration file is " + (configVersion - getConfig().getInt("config-version")) + " version(s) behind!");
+                getLogger().warning("To be able to access the newly added settings, please delete the current config.yml file and reload the plugin or server!");
+            }
     }
 
     @Override
