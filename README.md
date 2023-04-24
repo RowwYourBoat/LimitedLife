@@ -50,6 +50,6 @@ To enable coloured names in chat while using (a fork of) Paper, navigate to the 
 <br>
 When the global timer's active, offline players will still lose time.  
 <br>
-For support, please join my public [Limited Life Discord Server](https://discord.com/invite/PEsQSZVSwU) or contact me privately: Rowan#4321  
+For support, please join my [Discord Support Server](https://discord.com/invite/phJHjvrdE5)!
 <br>
 Credits to [Grian](https://youtu.be/gzaIHdjLIyM) for coming up with the idea for Limited Life!
