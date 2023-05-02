@@ -1,16 +1,22 @@
 ## Set to -1 in order to disable configuration update reminders
-config-version: 3
+config-version: 4
 
 
 
 
 timer:
-  ## The amount of hours everyone starts off with
-  start-time-in-hours: 24
+  ## The amount of seconds everyone starts off with
+  ## default: 86400 (24 hours)
+  start-time-in-seconds: 86400
 
   ## When set to true, players who join the server late will have their time set to a fair
-  ## amount automatically
+  ## amount automatically (same amount of time as the person who currently has the most)
   balanced-time-for-latecomers: true
+
+  ## The amount of seconds a player will have after being revived
+  ## This only applies if recipes.revival-item.enabled is set to true
+  ## default: 10800 (3 hours)
+  seconds-on-revival: 10800
 
 
 
@@ -26,8 +32,8 @@ boogeyman:
 
   ## The maximum and minimum amount of boogeymen that are able to be chosen
   ## Set both to the same value to force a certain amount
-  amount-max: 1
   amount-min: 1
+  amount-max: 1
 
   ## The amount of time gained when a boogeyman secures a kill (in seconds)
   time-gain-on-boogey-kill: 3600
@@ -46,7 +52,7 @@ penalties:
   time-lost-on-death: 3600
 
   ## Determines whether players will lose time when killed by someone with the same
-  ## name colour as them (doesn't apply to red names)
+  ## name colour as them (doesn't apply to red names or boogeyman deaths)
   subtract-time-on-death-same-colour: true
 
 
@@ -57,7 +63,7 @@ rewards:
   time-gain-on-kill: 1800
 
   ## Determines whether players will receive time when they kill someone with
-  ## the same name colour as them (doesn't apply to red names)
+  ## the same name colour as them (doesn't apply to red names or boogeymen)
   add-time-on-kill-same-colour: true
 
 
@@ -71,6 +77,14 @@ name-colour-thresholds:
   ## The amount of time the player needs to have less than in order to become a yellow name (in seconds)
   ## default: 57600 (16 hours)
   yellow-name: 57600
+
+  ## The amount of time the player needs to have less than in order to become a green name (in seconds)
+  ## Only applies if dark-green-names is set to true
+  ## default: 86400 (24 hours)
+  green-name: 86400
+
+  ## Determines whether people with more time than specified in the field above will have a dark green name
+  dark-green-names: false
 
 
 
@@ -92,6 +106,20 @@ recipes:
   craftable-name-tag: true
   craftable-slimeball: false
 
+  ## Determines whether an item with the ability to revive players can be crafted
+  ## For the recipe, please make sure to use the correct enum names for materials
+  ## https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+  revival-item:
+    enabled: false
+    ## Determines whether the clock should be removed from the player's inventory after being used
+    consume-on-usage: true
+    ## Determines whether revived players should be teleported to the main world's spawn location (level-name in server.properties)
+    teleport-to-world-spawn: true
+    row1: BLAZE_ROD DIAMOND_BLOCK BLAZE_ROD
+    row2: REDSTONE_BLOCK CLOCK REDSTONE_BLOCK
+    row3: GOLDEN_APPLE DIAMOND_BLOCK GOLDEN_APPLE
+
+
 
 
 ## Please note that the following settings only get applied while in survival mode. ###################### !!! ######################
@@ -111,7 +139,7 @@ enchantment-table:
 ## Determines whether enchantments will be nerfed when applied to an item.
 anvil:
   stacking-nerf: false
-  level-limit: 1
+  level-limit: 2
 
 
 

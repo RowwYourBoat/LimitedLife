@@ -1,7 +1,6 @@
 package me.rowyourboat.limitedlife.data;
 
 import me.rowyourboat.limitedlife.LimitedLife;
-import me.rowyourboat.limitedlife.countdown.PlayerTimerTask;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -61,7 +60,7 @@ public class SaveHandler {
                 if (bestPlayerData != null)
                     saveYaml.set("plugin-timer", bestPlayerData.getLong("TimeRemaining"));
             } else
-                saveYaml.set("plugin-timer", plugin.getConfig().getLong("timer.start-time-in-hours")*(long)Math.pow(60,2));
+                saveYaml.set("plugin-timer", plugin.getConfig().getLong("timer.start-time-in-seconds"));
 
             save();
         }
@@ -109,9 +108,8 @@ public class SaveHandler {
     public void removePlayerDeathMark(OfflinePlayer player) {
         String uuidString = player.getUniqueId().toString();
         if (getMarkedAsDeadList().contains(uuidString))
-            if (LimitedLife.globalTimerActive) {
-                LimitedLife.playersActiveTimerList.add(player.getUniqueId());
-                new PlayerTimerTask(player);
+            if (LimitedLife.currentGlobalTimerTask != null) {
+                LimitedLife.currentGlobalTimerTask.startPlayerTimer(player);
             }
         getMarkedAsDeadList().remove(uuidString);
         save();

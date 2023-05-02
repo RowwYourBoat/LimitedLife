@@ -72,8 +72,8 @@ public class ModifyTimeCommand {
                 MainCommandExecutor.commandFeedback(sender, "Added " + timeAmountToModify + " minutes to " + player.getName() + "'s timer");
             } else {
                 LimitedLife.SaveHandler.addPlayerTime(player, timeAmountToModify);
-                sender.sendMessage(ChatColor.DARK_GREEN + "You've added " + timeAmountToModify + " minutes to " + player.getName() + "'s timer!");
-                MainCommandExecutor.commandFeedback(sender, "Added " + timeAmountToModify + " minutes to " + player.getName() + "'s timer");
+                sender.sendMessage(ChatColor.DARK_GREEN + "You've added " + timeAmountToModify + " seconds to " + player.getName() + "'s timer!");
+                MainCommandExecutor.commandFeedback(sender, "Added " + timeAmountToModify + " seconds to " + player.getName() + "'s timer");
             }
             if (LimitedLife.SaveHandler.getPlayerTimeLeft(player) > 0)
                 LimitedLife.SaveHandler.removePlayerDeathMark(player);

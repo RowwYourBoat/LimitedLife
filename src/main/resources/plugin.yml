@@ -2,7 +2,7 @@ name: LimitedLife
 version: '${project.version}'
 main: me.rowyourboat.limitedlife.LimitedLife
 api-version: 1.19
-authors: [Rowan]
+author: RowwYourBoat
 description: A recreation of the plugin/mod used in the official Limited Life series by Grian!
 website: https://github.com/RowwYourBoat
 

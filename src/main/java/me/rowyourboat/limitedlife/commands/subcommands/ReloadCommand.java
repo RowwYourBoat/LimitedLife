@@ -10,7 +10,7 @@ public class ReloadCommand {
     public static boolean execute(CommandSender sender) {
         LimitedLife.reloadPlugin(sender);
         sender.sendMessage(ChatColor.GRAY + "Reloading plugin..");
-        MainCommandExecutor.commandFeedback(sender, "Reloaded the plugin");
+        MainCommandExecutor.commandFeedback(sender, "Reloaded the Limited Life plugin");
         return true;
     }
 

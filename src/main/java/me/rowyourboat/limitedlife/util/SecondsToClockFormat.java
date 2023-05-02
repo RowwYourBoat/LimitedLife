@@ -39,8 +39,10 @@ public class SecondsToClockFormat {
                 color = ChatColor.RED;
             else if (TimeLeftInSeconds < LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.yellow-name"))
                 color = ChatColor.YELLOW;
-            else
+            else if ((LimitedLife.plugin.getConfig().getBoolean("name-colour-thresholds.dark-green-names") && TimeLeftInSeconds < LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.green-name")) || !LimitedLife.plugin.getConfig().getBoolean("name-colour-thresholds.dark-green-names"))
                 color = ChatColor.GREEN;
+            else
+                color = ChatColor.DARK_GREEN;
 
             String finalString = color + ChatColor.BOLD.toString() + hourString + ":" + minuteString + ":" + secondString;
             if (finalString.contains("-"))

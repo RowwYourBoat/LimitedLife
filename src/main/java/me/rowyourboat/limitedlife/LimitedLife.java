@@ -3,20 +3,18 @@ package me.rowyourboat.limitedlife;
 import me.rowyourboat.limitedlife.commands.BoogeymanReminderCommand;
 import me.rowyourboat.limitedlife.commands.MainCommandExecutor;
 import me.rowyourboat.limitedlife.commands.MainTabCompleter;
+import me.rowyourboat.limitedlife.countdown.GlobalTimerTask;
 import me.rowyourboat.limitedlife.data.SaveHandler;
 import me.rowyourboat.limitedlife.listeners.*;
 import me.rowyourboat.limitedlife.scoreboard.TeamHandler;
 import me.rowyourboat.limitedlife.util.CustomRecipes;
-import me.rowyourboat.limitedlife.util.bStatsCode;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.ArrayList;
-import java.util.UUID;
 
 public final class LimitedLife extends JavaPlugin {
 
@@ -26,16 +24,12 @@ public final class LimitedLife extends JavaPlugin {
     public static TeamHandler TeamHandler;
     public static CustomRecipes CustomRecipes;
 
-    public static boolean globalTimerActive;
-    public static ArrayList<UUID> playersActiveTimerList;
+    public static GlobalTimerTask currentGlobalTimerTask;
 
     @Override
     public void onEnable() {
-        int configVersion = 3;
+        int configVersion = 4;
         plugin = this;
-        globalTimerActive = false;
-
-        playersActiveTimerList = new ArrayList<>();
 
         SaveHandler = new SaveHandler();
         TeamHandler = new TeamHandler();
@@ -55,17 +49,18 @@ public final class LimitedLife extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new InventoryEvents(), plugin);
         Bukkit.getPluginManager().registerEvents(new ChatFormat(), plugin);
         Bukkit.getPluginManager().registerEvents(new EnchantmentLimitations(), plugin);
+        Bukkit.getPluginManager().registerEvents(new RevivalItemEvents(), plugin);
 
         plugin.saveDefaultConfig();
-        plugin.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[LimitedLife] The plugin has been loaded!"
-                + "\nPlease run the command '/lf timer start' to get started, or to resume everyone's timer!"
+        plugin.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + ChatColor.BOLD.toString() + "[LimitedLife] The plugin has been loaded!"
+                + ChatColor.RESET + ChatColor.GREEN + "\nPlease run the command '/lf timer start' to get started, or to resume everyone's timer!"
                 + "\nRun '/lf boogeyman roll' to roll the boogeyman!"
                 + "\nRun '/lf help' for a list of all commands!"
         );
 
         Bukkit.getOnlinePlayers().forEach(CustomRecipes::grant);
 
-        new Metrics(plugin, bStatsCode.get());
+        new Metrics(plugin, 17884);
 
         if (getConfig().getBoolean("other.plugin-update-reminders"))
             new UpdateChecker(plugin, 108589).getVersion(version -> {
@@ -86,14 +81,14 @@ public final class LimitedLife extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        globalTimerActive = false;
-        playersActiveTimerList.clear();
         SaveHandler.save();
+        currentGlobalTimerTask = null;
     }
 
     public static void reloadPlugin(CommandSender sender) {
         Bukkit.resetRecipes();
         plugin.reloadConfig();
+        HandlerList.unregisterAll();
         plugin.onDisable();
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             sender.sendMessage(ChatColor.DARK_GREEN + "Success!");

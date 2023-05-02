@@ -16,6 +16,7 @@ public class TeamHandler {
     private final JavaPlugin plugin;
     private final Scoreboard scoreboard;
 
+    private final Team darkGreenName;
     private final Team greenName;
     private final Team yellowName;
     private final Team redName;
@@ -24,24 +25,28 @@ public class TeamHandler {
     public TeamHandler() {
         this.plugin = LimitedLife.plugin;
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
-        if (scoreboardManager == null) plugin.getLogger().severe("Unable to locate the scoreboard manager! Have you initialized a world yet?");
+        if (scoreboardManager == null) plugin.getLogger().severe("Unable to locate the scoreboard manager! Have you initialized a world yet? Please restart the server to fix this.");
         scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         scoreboard.getTeams().forEach(Team::unregister);
 
+        darkGreenName = scoreboard.registerNewTeam("dark_green");
+        darkGreenName.setCanSeeFriendlyInvisibles(false);
+        darkGreenName.setColor(ChatColor.DARK_GREEN);
+
         greenName = scoreboard.registerNewTeam("green");
-        greenName.setCanSeeFriendlyInvisibles(true);
+        greenName.setCanSeeFriendlyInvisibles(false);
         greenName.setColor(ChatColor.GREEN);
 
         yellowName = scoreboard.registerNewTeam("yellow");
-        yellowName.setCanSeeFriendlyInvisibles(true);
+        yellowName.setCanSeeFriendlyInvisibles(false);
         yellowName.setColor(ChatColor.YELLOW);
 
         redName = scoreboard.registerNewTeam("red");
-        redName.setCanSeeFriendlyInvisibles(true);
+        redName.setCanSeeFriendlyInvisibles(false);
         redName.setColor(ChatColor.RED);
 
         grayName = scoreboard.registerNewTeam("gray");
-        grayName.setCanSeeFriendlyInvisibles(true);
+        grayName.setCanSeeFriendlyInvisibles(false);
         grayName.setColor(ChatColor.GRAY);
 
         Bukkit.getOnlinePlayers().forEach(player -> changeTeamAndGamemodeAccordingly(player, LimitedLife.SaveHandler.getPlayerTimeLeft(player)));
@@ -63,7 +68,7 @@ public class TeamHandler {
                     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                         onlinePlayer.sendTitle(ChatColor.RED + player.getName(), "ran out of time!", 20, 100, 20);
                         if (plugin.getConfig().getBoolean("other.lightning-sound-on-final-death"))
-                            onlinePlayer.playSound(player, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 1);
+                            onlinePlayer.playSound(onlinePlayer, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 1);
                     }
                 }
                 LimitedLife.SaveHandler.markPlayerAsDead(player);
@@ -80,9 +85,15 @@ public class TeamHandler {
                 player.setGameMode(GameMode.SURVIVAL);
                 LimitedLife.SaveHandler.removePlayerDeathMark(player);
             }
-        } else {
+        } else if ((plugin.getConfig().getBoolean("name-colour-thresholds.dark-green-names") && timeLeft < plugin.getConfig().getInt("name-colour-thresholds.green-name")) || !plugin.getConfig().getBoolean("name-colour-thresholds.dark-green-names")) {
             if (!greenName.hasEntry(player.getName())) {
                 greenName.addEntry(player.getName());
+                player.setGameMode(GameMode.SURVIVAL);
+                LimitedLife.SaveHandler.removePlayerDeathMark(player);
+            }
+        } else {
+            if (!darkGreenName.hasEntry(player.getName())) {
+                darkGreenName.addEntry(player.getName());
                 player.setGameMode(GameMode.SURVIVAL);
                 LimitedLife.SaveHandler.removePlayerDeathMark(player);
             }

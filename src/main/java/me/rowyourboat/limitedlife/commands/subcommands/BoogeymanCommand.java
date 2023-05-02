@@ -33,21 +33,39 @@ public class BoogeymanCommand {
         }
     }
 
-    private static void rollBoogeyman(int amount) {
+    private static void rollBoogeyman(int requestedAmount) {
         List<UUID> boogeymenList = new ArrayList<>();
         List<UUID> playerUUIDs = new ArrayList<>();
+
+        boolean redBoogeymenAllowed = LimitedLife.plugin.getConfig().getBoolean("boogeyman.red-boogeymen");
+        long redColourThreshold = LimitedLife.plugin.getConfig().getLong("name-colour-thresholds.red-name");
+
+        int candidateAmount = 0;
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (LimitedLife.plugin.getConfig().getBoolean("boogeyman.red-boogeymen"))
-                playerUUIDs.add(player.getUniqueId());
-            else if (LimitedLife.SaveHandler.getPlayerTimeLeft(player) > LimitedLife.plugin.getConfig().getLong("name-colour-thresholds.red-name"))
-                playerUUIDs.add(player.getUniqueId());
+            long playerTimeLeft = LimitedLife.SaveHandler.getPlayerTimeLeft(player);
+            if (redBoogeymenAllowed) {
+                if (playerTimeLeft > 0)
+                    candidateAmount++;
+            } else if (playerTimeLeft > redColourThreshold)
+                candidateAmount++;
         }
-        if (playerUUIDs.size() < amount) {
-            Bukkit.broadcastMessage(ChatColor.DARK_RED + "Not enough green/yellow names!");
+        if (candidateAmount == 0) {
+            Bukkit.broadcastMessage(ChatColor.DARK_RED + "There aren't enough players left for there to be a boogeyman!");
             rolling = false;
             return;
         }
-        for (int i = amount ; i > 0 ; i--) {
+        if (candidateAmount < requestedAmount)
+            requestedAmount = candidateAmount;
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            long playerTimeLeft = LimitedLife.SaveHandler.getPlayerTimeLeft(player);
+            if (redBoogeymenAllowed && playerTimeLeft != 0)
+                playerUUIDs.add(player.getUniqueId());
+            else if (playerTimeLeft > redColourThreshold)
+                playerUUIDs.add(player.getUniqueId());
+        }
+
+        for (int i = requestedAmount ; i > 0 ; i--) {
             UUID chosenPlayer = null;
             while (chosenPlayer == null) {
                 Random random = new Random();
@@ -135,7 +153,7 @@ public class BoogeymanCommand {
             MainCommandExecutor.commandFeedback(sender, "Cured " + finalOfflinePlayer.getName());
         } else if (args[1].equalsIgnoreCase("roll")) {
 
-            if (!LimitedLife.globalTimerActive) {
+            if (LimitedLife.currentGlobalTimerTask == null) {
                 sender.sendMessage(ChatColor.DARK_RED + "The global timer must be active to roll the boogeyman!");
                 return true;
             }

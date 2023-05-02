@@ -21,27 +21,6 @@ import java.util.UUID;
 
 public class PlayerDeathEvents implements Listener {
 
-//    private final HashMap<UUID, UUID> lastHitByMap = new HashMap<>();
-//    private final HashMap<UUID, Integer> lastHitBySchedulerMap = new HashMap<>();
-
-//    @EventHandler
-//    public void updateLastHitByHashMap(EntityDamageByEntityEvent event) {
-//        if (!LimitedLife.globalTimerActive) return;
-//        if (!(event.getDamager() instanceof Player) || !(event.getEntity() instanceof Player)) return;
-//        UUID damageReceiverUUID = event.getEntity().getUniqueId();
-//        UUID damageCauserUUID = event.getDamager().getUniqueId();
-//
-//        lastHitByMap.put(damageReceiverUUID, damageCauserUUID);
-//
-//        if (lastHitBySchedulerMap.get(damageReceiverUUID) != null)
-//            Bukkit.getScheduler().cancelTask(lastHitBySchedulerMap.get(damageReceiverUUID));
-//
-//        lastHitBySchedulerMap.remove(damageReceiverUUID);
-//        int schedulerInt = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> lastHitByMap.remove(damageReceiverUUID), 20*10); // 10 seconds
-//
-//        lastHitBySchedulerMap.put(damageReceiverUUID, schedulerInt);
-//    }
-
     private final HashMap<UUID, Long> timeLostInSeconds = new HashMap<>();
 
     private final SaveHandler SaveHandler;
@@ -54,7 +33,7 @@ public class PlayerDeathEvents implements Listener {
 
     @EventHandler
     public void addTimeOnKill(PlayerDeathEvent event) {
-        if (!LimitedLife.globalTimerActive) return;
+        if (LimitedLife.currentGlobalTimerTask == null) return;
         Player deadPlayer = event.getEntity();
 
         FileConfiguration config = plugin.getConfig();
@@ -98,13 +77,13 @@ public class PlayerDeathEvents implements Listener {
 
     @EventHandler
     public void subtractTimeOnRespawn(PlayerRespawnEvent event) {
-        if (!LimitedLife.globalTimerActive) return;
+        if (LimitedLife.currentGlobalTimerTask == null) return;
         Player player = event.getPlayer();
         if (timeLostInSeconds.containsKey(player.getUniqueId())) {
             long timeToSubtract = timeLostInSeconds.get(player.getUniqueId());
-            timeLostInSeconds.remove(player.getUniqueId());
             SaveHandler.subtractPlayerTime(player, timeToSubtract);
             SaveHandler.sendTimeChangeTitle(player, ChatColor.RED + "-" + SecondsToClockFormat.convert(timeToSubtract, false));
+            timeLostInSeconds.remove(player.getUniqueId());
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 if (player.isOnline())
                     if (SaveHandler.getPlayerTimeLeft(player) == 0)
