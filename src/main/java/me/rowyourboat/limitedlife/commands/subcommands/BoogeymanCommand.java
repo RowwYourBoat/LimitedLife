@@ -20,6 +20,7 @@ import java.util.UUID;
 public class BoogeymanCommand {
 
     private static boolean rolling = false;
+    private final static ArrayList<Integer> taskIds = new ArrayList<>();
 
     private static boolean invalidSyntax(CommandSender sender) {
         sender.sendMessage(ChatColor.DARK_RED + "Invalid Syntax!\n/lf boogeyman <roll|cure|punish|clear> [player]");
@@ -124,6 +125,10 @@ public class BoogeymanCommand {
             SaveHandler.cureAllBoogeymen();
             sender.sendMessage(ChatColor.DARK_GREEN + "You've cured all existing boogeymen!");
             MainCommandExecutor.commandFeedback(sender, "Cured all existing boogeymen");
+        } else if (args[1].equalsIgnoreCase("cancel") && rolling) {
+            taskIds.forEach(id -> Bukkit.getScheduler().cancelTask(id));
+            rolling = false;
+            sender.sendMessage(ChatColor.DARK_GREEN + "You've cancelled the boogeyman roll!");
         } else if (args[1].equalsIgnoreCase("punish")) {
             SaveHandler.punishBoogeymen();
             sender.sendMessage(ChatColor.DARK_GREEN + "The existing boogeymen have all been punished for not securing a kill!");
@@ -148,7 +153,7 @@ public class BoogeymanCommand {
                 return true;
             }
 
-            SaveHandler.cureBoogeyman(finalOfflinePlayer.getUniqueId().toString());
+            SaveHandler.cureBoogeyman(finalOfflinePlayer.getUniqueId().toString(), true);
             sender.sendMessage(ChatColor.DARK_GREEN + "You've successfully cured " + finalOfflinePlayer.getName() + "!");
             MainCommandExecutor.commandFeedback(sender, "Cured " + finalOfflinePlayer.getName());
         } else if (args[1].equalsIgnoreCase("roll")) {
@@ -176,10 +181,10 @@ public class BoogeymanCommand {
                 Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman will be chosen in " + rollDelayInMinutes + " minutes!");
                 BukkitScheduler scheduler = Bukkit.getScheduler();
                 if (config.getBoolean("boogeyman.reminders")) {
-                    scheduler.runTaskLater(LimitedLife.plugin, () -> Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman will be chosen in " + rollDelayInMinutes / 2 + " minutes!"), (rollDelayInMinutes / 2) * 60 * 20);
-                    scheduler.runTaskLater(LimitedLife.plugin, () -> Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman is about to be chosen!"), (long) (rollDelayInMinutes * .90) * 60 * 20);
+                    taskIds.add(scheduler.runTaskLater(LimitedLife.plugin, () -> Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman will be chosen in " + rollDelayInMinutes / 2 + " minutes!"), (rollDelayInMinutes / 2) * 60 * 20).getTaskId());
+                    taskIds.add(scheduler.runTaskLater(LimitedLife.plugin, () -> Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman is about to be chosen!"), (long) (rollDelayInMinutes * .90) * 60 * 20).getTaskId());
                 }
-                scheduler.runTaskLater(LimitedLife.plugin, BoogeymanCommand::queueAndSendTitles, rollDelayInMinutes * 60 * 20);
+                taskIds.add(scheduler.runTaskLater(LimitedLife.plugin, BoogeymanCommand::queueAndSendTitles, rollDelayInMinutes * 60 * 20).getTaskId());
 
             } else
                 queueAndSendTitles();

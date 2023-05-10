@@ -14,13 +14,13 @@ public class MainCommandExecutor implements CommandExecutor {
 
     public static void commandFeedback(CommandSender sender, String str) {
         if (!LimitedLife.plugin.getConfig().getBoolean("other.command-feedback")) return;
+
+        String finalMessage = ChatColor.GRAY + ChatColor.ITALIC.toString() + "[" + sender.getName() + ": " + str + "]";
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.hasPermission("limitedlife.admin") && !player.getName().equalsIgnoreCase(sender.getName())) {
-                String finalMessage = ChatColor.GRAY + ChatColor.ITALIC.toString() + "[" + sender.getName() + ": " + str + "]";
+            if (player.hasPermission("limitedlife.admin") && !player.getName().equalsIgnoreCase(sender.getName()))
                 player.sendMessage(finalMessage);
-                Bukkit.getConsoleSender().sendMessage(finalMessage);
-            }
         }
+        Bukkit.getConsoleSender().sendMessage(finalMessage);
     }
 
     @Override

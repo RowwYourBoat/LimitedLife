@@ -49,15 +49,15 @@ public class ModifyTimeCommand {
 
         if (subtract) {
             if (timeType.equalsIgnoreCase("h")) {
-                LimitedLife.SaveHandler.subtractPlayerTime(player, timeAmountToModify * 60 * 60);
+                LimitedLife.SaveHandler.subtractPlayerTime(player, timeAmountToModify * 60 * 60, true);
                 sender.sendMessage(ChatColor.DARK_GREEN + "You've subtracted " + timeAmountToModify + " hours from " + player.getName() + "'s timer!");
                 MainCommandExecutor.commandFeedback(sender, "Subtracted " + timeAmountToModify + " hours from " + player.getName() + "'s timer");
             } else if (timeType.equalsIgnoreCase("m")) {
-                LimitedLife.SaveHandler.subtractPlayerTime(player, timeAmountToModify * 60);
+                LimitedLife.SaveHandler.subtractPlayerTime(player, timeAmountToModify * 60, true);
                 sender.sendMessage(ChatColor.DARK_GREEN + "You've subtracted " + timeAmountToModify + " minutes from " + player.getName() + "'s timer!");
                 MainCommandExecutor.commandFeedback(sender, "Subtracted " + timeAmountToModify + " minutes from " + player.getName() + "'s timer");
             } else {
-                LimitedLife.SaveHandler.subtractPlayerTime(player, timeAmountToModify);
+                LimitedLife.SaveHandler.subtractPlayerTime(player, timeAmountToModify, true);
                 sender.sendMessage(ChatColor.DARK_GREEN + "You've subtracted " + timeAmountToModify + " seconds from " + player.getName() + "'s timer!");
                 MainCommandExecutor.commandFeedback(sender, "Subtracted " + timeAmountToModify + " seconds from " + player.getName() + "'s timer");
             }

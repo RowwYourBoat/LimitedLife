@@ -1,6 +1,7 @@
 package me.rowyourboat.limitedlife.data;
 
 import me.rowyourboat.limitedlife.LimitedLife;
+import me.rowyourboat.limitedlife.util.SecondsToClockFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class SaveHandler {
@@ -84,18 +86,26 @@ public class SaveHandler {
         section.set("TimeRemaining", timeToSet);
     }
 
-    public void subtractPlayerTime(OfflinePlayer player, long timeToSubtract) {
-        long timeLeft = getPlayerTimeLeft(player);
+    public void subtractPlayerTime(OfflinePlayer offlinePlayer, long timeToSubtract, boolean showTitle) {
+        long timeLeft = getPlayerTimeLeft(offlinePlayer);
         if (timeLeft-timeToSubtract<0) {
-            setPlayerTimeLeft(player, 0);
+            setPlayerTimeLeft(offlinePlayer, 0);
             return;
         }
-        setPlayerTimeLeft(player, timeLeft-timeToSubtract);
+        setPlayerTimeLeft(offlinePlayer, timeLeft-timeToSubtract);
+
+        Player onlinePlayer = offlinePlayer.getPlayer();
+        if (onlinePlayer != null && showTitle)
+            sendTimeChangeTitle(onlinePlayer, ChatColor.RED + "-" + SecondsToClockFormat.convert(timeToSubtract, false));
     }
 
-    public void addPlayerTime(OfflinePlayer player, long timeToAdd) {
-        long timeLeft = getPlayerTimeLeft(player);
-        setPlayerTimeLeft(player, timeLeft+timeToAdd);
+    public void addPlayerTime(OfflinePlayer offlinePlayer, long timeToAdd) {
+        long timeLeft = getPlayerTimeLeft(offlinePlayer);
+        setPlayerTimeLeft(offlinePlayer, timeLeft+timeToAdd);
+
+        Player onlinePlayer = offlinePlayer.getPlayer();
+        if (onlinePlayer != null)
+            sendTimeChangeTitle(onlinePlayer, ChatColor.GREEN + "+" + SecondsToClockFormat.convert(timeToAdd, false));
     }
 
     public void markPlayerAsDead(OfflinePlayer player) {
@@ -120,11 +130,13 @@ public class SaveHandler {
         save();
     }
 
-    public void cureBoogeyman(String boogeymanToCureUUID) {
+    public void cureBoogeyman(String boogeymanToCureUUID, boolean awardTime) {
         getBoogeymenList().remove(boogeymanToCureUUID);
         Player player = Bukkit.getPlayer(UUID.fromString(boogeymanToCureUUID));
+        if (awardTime)
+            addPlayerTime(Bukkit.getOfflinePlayer(UUID.fromString(boogeymanToCureUUID)), plugin.getConfig().getLong("boogeyman.time-gain-on-boogey-kill"));
         if (player != null) {
-            player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "You've been cured!", null, 10, 40, 10);
+            player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "You've been cured!", ChatColor.GREEN + "+" + SecondsToClockFormat.convert(plugin.getConfig().getLong("boogeyman.time-gain-on-boogey-kill"), false), 10, 40, 10);
             player.playSound(player, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 3, 1);
         }
         save();
@@ -195,11 +207,37 @@ public class SaveHandler {
         return (List<String>) saveYaml.getList("marked-as-dead-list");
     }
 
+    public OfflinePlayer getPlayerByName(String name) {
+        OfflinePlayer finalOfflinePlayer = null;
+
+        Set<String> values = saveYaml.getValues(false).keySet();
+        for (String value : values) {
+            if (saveYaml.isConfigurationSection(value)) {
+                ConfigurationSection playerSaveData = saveYaml.getConfigurationSection(value);
+                if (playerSaveData != null) {
+                    String nameValue = playerSaveData.getString("Name");
+                    if (nameValue != null) {
+                        if (nameValue.equalsIgnoreCase(name)) {
+                            finalOfflinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(value));
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return finalOfflinePlayer;
+    }
+
     public ConfigurationSection getPlayerSaveData(OfflinePlayer player) {
         String uuidString = player.getUniqueId().toString();
-        if (saveYaml.getConfigurationSection(uuidString) != null)
-            return saveYaml.getConfigurationSection(uuidString);
-        else {
+        ConfigurationSection playerSaveData = saveYaml.getConfigurationSection(uuidString);
+        if (playerSaveData != null) {
+            String nameValue = playerSaveData.getString("Name");
+            if (nameValue == null || !nameValue.equalsIgnoreCase(player.getName()))
+                playerSaveData.set("Name", player.getName());
+            return playerSaveData;
+        } else {
             ConfigurationSection newSection = saveYaml.createSection(uuidString);
             newSection.set("TimeRemaining", -1);
             return newSection;

@@ -6,7 +6,7 @@
 
     <groupId>me.rowyourboat</groupId>
     <artifactId>LimitedLife</artifactId>
-    <version>1.3.0</version>
+    <version>1.3.1</version>
     <packaging>jar</packaging>
 
     <name>LimitedLife</name>

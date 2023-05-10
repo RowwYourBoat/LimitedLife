@@ -6,7 +6,6 @@ import me.rowyourboat.limitedlife.util.SecondsToClockFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,37 +41,40 @@ public class PlayerDeathEvents implements Listener {
         Player killer = deadPlayer.getKiller();
         if (killer != null) {
             if (boogeymenUUIDList.contains(killer.getUniqueId().toString())) {
-                SaveHandler.addPlayerTime(killer, config.getLong("boogeyman.time-gain-on-boogey-kill"));
-                SaveHandler.sendTimeChangeTitle(killer, ChatColor.GREEN + "+" + SecondsToClockFormat.convert(config.getLong("boogeyman.time-gain-on-boogey-kill"), false));
-                SaveHandler.cureBoogeyman(killer.getUniqueId().toString());
-                timeLostInSeconds.put(deadPlayer.getUniqueId(), config.getLong("boogeyman.time-lost-on-boogey-death"));
+                SaveHandler.cureBoogeyman(killer.getUniqueId().toString(), true);
+                newPendingTimeSubtractionTitle(deadPlayer, config.getLong("boogeyman.time-lost-on-boogey-death"));
             } else {
                 String killerTeamName = SaveHandler.convertTimeToTeamName(SaveHandler.getPlayerTimeLeft(killer));
                 String victimTeamName = SaveHandler.convertTimeToTeamName(SaveHandler.getPlayerTimeLeft(deadPlayer));
 
                 if (killerTeamName.equalsIgnoreCase("RED") && victimTeamName.equalsIgnoreCase("RED")){
-                    rewardTime(killer);
-                    timeLostInSeconds.put(deadPlayer.getUniqueId(), config.getLong("penalties.time-lost-on-death"));
+                    SaveHandler.addPlayerTime(killer, LimitedLife.plugin.getConfig().getLong("rewards.time-gain-on-kill"));
+                    newPendingTimeSubtractionTitle(deadPlayer, config.getLong("penalties.time-lost-on-death"));
                     return;
                 }
 
                 if (killerTeamName.equalsIgnoreCase(victimTeamName)) {
 
                     if (config.getBoolean("rewards.add-time-on-kill-same-colour"))
-                        rewardTime(killer);
+                        SaveHandler.addPlayerTime(killer, LimitedLife.plugin.getConfig().getLong("rewards.time-gain-on-kill"));
 
                     if (config.getBoolean("penalties.subtract-time-on-death-same-colour"))
-                        timeLostInSeconds.put(deadPlayer.getUniqueId(), config.getLong("penalties.time-lost-on-death"));
+                        newPendingTimeSubtractionTitle(deadPlayer, config.getLong("penalties.time-lost-on-death"));
 
                 } else {
-                    rewardTime(killer);
-                    timeLostInSeconds.put(deadPlayer.getUniqueId(), config.getLong("penalties.time-lost-on-death"));
+                    SaveHandler.addPlayerTime(killer, LimitedLife.plugin.getConfig().getLong("rewards.time-gain-on-kill"));
+                    newPendingTimeSubtractionTitle(deadPlayer, config.getLong("penalties.time-lost-on-death"));
                 }
 
             }
         } else {
-            timeLostInSeconds.put(deadPlayer.getUniqueId(), config.getLong("penalties.time-lost-on-death"));
+            newPendingTimeSubtractionTitle(deadPlayer, config.getLong("penalties.time-lost-on-death"));
         }
+    }
+
+    public void newPendingTimeSubtractionTitle(Player deadPlayer, long timeToSubtract) {
+        SaveHandler.subtractPlayerTime(deadPlayer, timeToSubtract, false);
+        timeLostInSeconds.put(deadPlayer.getUniqueId(), timeToSubtract);
     }
 
     @EventHandler
@@ -81,20 +83,14 @@ public class PlayerDeathEvents implements Listener {
         Player player = event.getPlayer();
         if (timeLostInSeconds.containsKey(player.getUniqueId())) {
             long timeToSubtract = timeLostInSeconds.get(player.getUniqueId());
-            SaveHandler.subtractPlayerTime(player, timeToSubtract);
-            SaveHandler.sendTimeChangeTitle(player, ChatColor.RED + "-" + SecondsToClockFormat.convert(timeToSubtract, false));
             timeLostInSeconds.remove(player.getUniqueId());
+            SaveHandler.sendTimeChangeTitle(player, ChatColor.RED + "-" + SecondsToClockFormat.convert(timeToSubtract, false));
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 if (player.isOnline())
                     if (SaveHandler.getPlayerTimeLeft(player) == 0)
                         player.setGameMode(GameMode.SPECTATOR);
             }, 10);
         }
-    }
-
-    public void rewardTime(OfflinePlayer killerOfflinePlayer) {
-        SaveHandler.addPlayerTime(killerOfflinePlayer, LimitedLife.plugin.getConfig().getLong("rewards.time-gain-on-kill"));
-        SaveHandler.sendTimeChangeTitle(killerOfflinePlayer.getPlayer(), ChatColor.GREEN + "+" + SecondsToClockFormat.convert(LimitedLife.plugin.getConfig().getLong("rewards.time-gain-on-kill"), false));
     }
 
 }

@@ -2,6 +2,7 @@ package me.rowyourboat.limitedlife.commands;
 
 import me.rowyourboat.limitedlife.LimitedLife;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -38,11 +39,11 @@ public class MainTabCompleter implements TabCompleter {
         return arguments;
     }
 
-    private List<String> getHelpCommandArgs() {
+    private List<String> getOfflinePlayers() {
         List<String> arguments = new ArrayList<>();
-        arguments.add("boogeyman");
-        arguments.add("modifytime");
-        arguments.add("timer");
+        for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
+            arguments.add(offlinePlayer.getName());
+        }
         return arguments;
     }
 
@@ -59,13 +60,13 @@ public class MainTabCompleter implements TabCompleter {
             if (args[0].equalsIgnoreCase("timer"))
                 return stringToList("start,pause,reset");
             else if (args[0].equalsIgnoreCase("boogeyman"))
-                return stringToList("roll,cure,clear,punish");
+                return stringToList("roll,cure,clear,punish,cancel");
             else if (args[0].equalsIgnoreCase("modifytime"))
                 return null;
             else if (args[0].equalsIgnoreCase("gettime"))
-                return null;
+                return getOfflinePlayers();
             else if (args[0].equalsIgnoreCase("help"))
-                return getHelpCommandArgs();
+                return stringToList("boogeyman,modifytime,timer");
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("timer"))
                 return null;

@@ -6,10 +6,10 @@ import org.bukkit.ChatColor;
 public class SecondsToClockFormat {
 
     // https://youtu.be/weJHt-Jf0uE?list=LL
-    public static String convert(long TimeLeftInSeconds, boolean applyColor) {
+    public static String convert(long seconds, boolean applyColor) {
         final int MINUTES_IN_HOUR = 60;
         final int SECONDS_IN_MINUTE = 60;
-        long second = TimeLeftInSeconds;
+        long second = seconds;
         long minute;
         long hour;
 
@@ -33,13 +33,13 @@ public class SecondsToClockFormat {
 
         if (applyColor) {
             ChatColor color;
-            if (TimeLeftInSeconds == 0)
+            if (seconds == 0)
                 color = ChatColor.GRAY;
-            else if (TimeLeftInSeconds < LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.red-name"))
+            else if (seconds < LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.red-name"))
                 color = ChatColor.RED;
-            else if (TimeLeftInSeconds < LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.yellow-name"))
+            else if (seconds < LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.yellow-name"))
                 color = ChatColor.YELLOW;
-            else if ((LimitedLife.plugin.getConfig().getBoolean("name-colour-thresholds.dark-green-names") && TimeLeftInSeconds < LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.green-name")) || !LimitedLife.plugin.getConfig().getBoolean("name-colour-thresholds.dark-green-names"))
+            else if ((LimitedLife.plugin.getConfig().getBoolean("name-colour-thresholds.dark-green-names") && seconds < LimitedLife.plugin.getConfig().getInt("name-colour-thresholds.green-name")) || !LimitedLife.plugin.getConfig().getBoolean("name-colour-thresholds.dark-green-names"))
                 color = ChatColor.GREEN;
             else
                 color = ChatColor.DARK_GREEN;
