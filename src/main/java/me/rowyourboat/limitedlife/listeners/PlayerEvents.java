@@ -3,14 +3,13 @@ package me.rowyourboat.limitedlife.listeners;
 import me.rowyourboat.limitedlife.LimitedLife;
 import me.rowyourboat.limitedlife.data.SaveHandler;
 import me.rowyourboat.limitedlife.util.SecondsToClockFormat;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,14 +17,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class PlayerDeathEvents implements Listener {
+public class PlayerEvents implements Listener {
 
     private final HashMap<UUID, Long> timeLostInSeconds = new HashMap<>();
 
     private final SaveHandler SaveHandler;
     private final JavaPlugin plugin;
 
-    public PlayerDeathEvents() {
+    public PlayerEvents() {
         this.SaveHandler = LimitedLife.SaveHandler;
         this.plugin = LimitedLife.plugin;
     }
@@ -70,6 +69,7 @@ public class PlayerDeathEvents implements Listener {
         } else {
             newPendingTimeSubtractionTitle(deadPlayer, config.getLong("penalties.time-lost-on-death"));
         }
+        LimitedLife.TeamHandler.changeTeamAndGamemodeAccordingly(deadPlayer, SaveHandler.getPlayerTimeLeft(deadPlayer));
     }
 
     public void newPendingTimeSubtractionTitle(Player deadPlayer, long timeToSubtract) {
@@ -78,19 +78,35 @@ public class PlayerDeathEvents implements Listener {
     }
 
     @EventHandler
-    public void subtractTimeOnRespawn(PlayerRespawnEvent event) {
+    public void sendTitleOnRespawn(PlayerRespawnEvent event) {
         if (LimitedLife.currentGlobalTimerTask == null) return;
         Player player = event.getPlayer();
         if (timeLostInSeconds.containsKey(player.getUniqueId())) {
             long timeToSubtract = timeLostInSeconds.get(player.getUniqueId());
             timeLostInSeconds.remove(player.getUniqueId());
             SaveHandler.sendTimeChangeTitle(player, ChatColor.RED + "-" + SecondsToClockFormat.convert(timeToSubtract, false));
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                if (player.isOnline())
-                    if (SaveHandler.getPlayerTimeLeft(player) == 0)
-                        player.setGameMode(GameMode.SPECTATOR);
-            }, 10);
         }
+    }
+
+    @EventHandler
+    public void setTeamOnJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        long timeLeft = LimitedLife.SaveHandler.getPlayerTimeLeft(player);
+        if (timeLeft == -1 && LimitedLife.currentGlobalTimerTask != null && !LimitedLife.currentGlobalTimerTask.playerHasActiveTimer(player)) {
+
+            if (LimitedLife.plugin.getConfig().getBoolean("timer.balanced-time-for-latecomers"))
+                LimitedLife.SaveHandler.setPlayerTimeLeft(player, LimitedLife.SaveHandler.getPluginTimeRemaining());
+            else LimitedLife.SaveHandler.setPlayerTimeLeft(player, LimitedLife.plugin.getConfig().getInt("timer.start-time-in-seconds"));
+
+            LimitedLife.currentGlobalTimerTask.startPlayerTimer(player);
+        } else if (LimitedLife.currentGlobalTimerTask != null && !LimitedLife.currentGlobalTimerTask.playerHasActiveTimer(player)) {
+            LimitedLife.currentGlobalTimerTask.startPlayerTimer(player);
+        }
+    }
+
+    @EventHandler
+    public void grantRecipesOnJoin(PlayerJoinEvent event) {
+        LimitedLife.CustomRecipes.grant(event.getPlayer());
     }
 
 }

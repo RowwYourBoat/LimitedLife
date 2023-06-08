@@ -4,7 +4,6 @@ import me.rowyourboat.limitedlife.LimitedLife;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
@@ -65,11 +64,10 @@ public class TeamHandler {
                 grayName.addEntry(player.getName());
                 player.setGameMode(GameMode.SPECTATOR);
                 if (!LimitedLife.SaveHandler.getMarkedAsDeadList().contains(player.getUniqueId().toString())) {
-                    for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    for (Player onlinePlayer : Bukkit.getOnlinePlayers())
                         onlinePlayer.sendTitle(ChatColor.RED + player.getName(), "ran out of time!", 20, 100, 20);
-                        if (plugin.getConfig().getBoolean("other.lightning-sound-on-final-death"))
-                            onlinePlayer.playSound(onlinePlayer, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1, 1);
-                    }
+                    if (LimitedLife.plugin.getConfig().getBoolean("other.lightning-strike-on-final-death"))
+                        player.getWorld().strikeLightningEffect(player.getLocation());
                 }
                 LimitedLife.SaveHandler.markPlayerAsDead(player);
             }

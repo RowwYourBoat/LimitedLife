@@ -18,7 +18,8 @@ public class TimerCommand {
     private static void sendTitleToPlayers(String title, Sound sound) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.sendTitle(title, null, 10, 40, 10);
-            player.playSound(player, sound, 1, 1);
+            if (LimitedLife.plugin.getConfig().getBoolean("sound-effects.enabled"))
+                player.playSound(player, sound, 1, 1);
         }
     }
 
@@ -48,10 +49,17 @@ public class TimerCommand {
                     }, 120);
                 }
 
-                sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "3", Sound.BLOCK_NOTE_BLOCK_CHIME);
-                scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "2", Sound.BLOCK_NOTE_BLOCK_CHIME), 40);
-                scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.RED + ChatColor.BOLD.toString() + "1", Sound.BLOCK_NOTE_BLOCK_CHIME), 80);
-                scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "The timer has begun!", Sound.ITEM_GOAT_HORN_SOUND_2), 120);
+                Sound countdownSound;
+                try {
+                    countdownSound = Sound.valueOf(LimitedLife.plugin.getConfig().getString("sound-effects.countdown"));
+                } catch (IllegalArgumentException e) {
+                    countdownSound = null;
+                }
+                final Sound finalCountdownSound = countdownSound;
+                sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "3", countdownSound);
+                scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "2", finalCountdownSound), 40);
+                scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.RED + ChatColor.BOLD.toString() + "1", finalCountdownSound), 80);
+                scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "The timer has begun!", Sound.valueOf(LimitedLife.plugin.getConfig().getString("sound-effects.timer-begun"))), 120);
 
                 sender.sendMessage(ChatColor.DARK_GREEN + "You've started/resumed the timer for everyone!");
                 MainCommandExecutor.commandFeedback(sender, "Resumed the timer for everyone");

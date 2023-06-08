@@ -1,5 +1,5 @@
 ## Set to -1 in order to disable configuration update reminders
-config-version: 4
+config-version: 5
 
 
 
@@ -145,7 +145,7 @@ anvil:
 
 
 ## You may whitelist potions by adding their enum name to the list.
-## For help, refer to the wiki: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionType.html
+## For help on how a potion's name should be spelled, refer to the wiki: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionType.html
 ## Please note that the following settings only get applied while in survival mode. ###################### !!! ######################
 potion-whitelist:
   enabled: false
@@ -163,6 +163,22 @@ potion-whitelist:
 
 
 
+## Make sure to use only valid enum names. For help, refer to the following wiki page:
+## https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
+## (You may use CTRL+F to find the sound you want easily)
+## Setting a value to null will disable the sound effect
+sound-effects:
+  enabled: true
+  boogeyman-chosen: ENTITY_ENDER_DRAGON_GROWL
+  boogeyman-failed: ENTITY_ENDER_DRAGON_GROWL
+  boogeyman-cured: ENTITY_VILLAGER_YES
+  boogeyman-not-chosen: ENTITY_VILLAGER_YES
+  countdown: BLOCK_NOTE_BLOCK_HAT
+  timer-begun: ITEM_GOAT_HORN_SOUND_2
+
+
+
+
 custom-chat-format:
   enabled: false
   ## Make sure to include 'player' and 'message' in the format, as they are placeholders!
@@ -172,8 +188,9 @@ custom-chat-format:
 
 
 other:
-  ## Determines whether a lighting sound will be played when someone runs out of time
-  lightning-sound-on-final-death: true
+  ## Determines whether lightning will be struck at the last location of the player when they run out of time.
+  ## The lightning strike will not deal any player/environmental damage.
+  lightning-strike-on-final-death: true
 
   ## Quick command to find out whether you're the boogeyman
   am-i-the-boogeyman-command: true

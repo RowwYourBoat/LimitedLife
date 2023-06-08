@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -20,7 +21,8 @@ public class MainCommandExecutor implements CommandExecutor {
             if (player.hasPermission("limitedlife.admin") && !player.getName().equalsIgnoreCase(sender.getName()))
                 player.sendMessage(finalMessage);
         }
-        Bukkit.getConsoleSender().sendMessage(finalMessage);
+        if (!(sender instanceof ConsoleCommandSender))
+            Bukkit.getConsoleSender().sendMessage(finalMessage);
     }
 
     @Override

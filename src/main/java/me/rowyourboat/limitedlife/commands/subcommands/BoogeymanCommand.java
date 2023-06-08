@@ -84,10 +84,12 @@ public class BoogeymanCommand {
             if (player != null) {
                 if (boogeymenList.contains(playerUUID)) {
                     player.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman", null, 10, 60, 10);
-                    player.playSound(player, Sound.ENTITY_ENDER_DRAGON_DEATH, 3, 1);
+                    if (LimitedLife.plugin.getConfig().getBoolean("sound-effects.enabled"))
+                        player.playSound(player, Sound.valueOf(LimitedLife.plugin.getConfig().getString("sound-effects.boogeyman-chosen")), 1, 1);
                 } else {
                     player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "NOT The Boogeyman", null, 10, 60, 10);
-                    player.playSound(player, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 3, 1);
+                    if (LimitedLife.plugin.getConfig().getBoolean("sound-effects.enabled"))
+                        player.playSound(player, Sound.valueOf(LimitedLife.plugin.getConfig().getString("sound-effects.boogeyman-not-chosen")), 1, 1);
                 }
             }
         }
@@ -100,12 +102,19 @@ public class BoogeymanCommand {
         int max = config.getInt("boogeyman.amount-max") + 1;
         int min = config.getInt("boogeyman.amount-min");
 
+        Sound countdownSound;
+        try {
+            countdownSound = Sound.valueOf(LimitedLife.plugin.getConfig().getString("sound-effects.countdown"));
+        } catch (IllegalArgumentException e) {
+            countdownSound = null;
+        }
+        final Sound finalCountdownSound = countdownSound;
         BukkitScheduler scheduler = Bukkit.getScheduler();
         Bukkit.broadcastMessage(ChatColor.RED + ChatColor.BOLD.toString() + "The Boogeyman is now being chosen!");
-        sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "3", Sound.BLOCK_NOTE_BLOCK_CHIME);
-        scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "2", Sound.BLOCK_NOTE_BLOCK_CHIME), 50);
-        scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.RED + ChatColor.BOLD.toString() + "1", Sound.BLOCK_NOTE_BLOCK_CHIME), 100);
-        scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "You are..", Sound.BLOCK_NOTE_BLOCK_BANJO), 150);
+        sendTitleToPlayers(ChatColor.GREEN + ChatColor.BOLD.toString() + "3", countdownSound);
+        scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "2", finalCountdownSound), 50);
+        scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.RED + ChatColor.BOLD.toString() + "1", finalCountdownSound), 100);
+        scheduler.runTaskLater(LimitedLife.plugin, () -> sendTitleToPlayers(ChatColor.YELLOW + ChatColor.BOLD.toString() + "You are..", null), 150);
         scheduler.runTaskLater(LimitedLife.plugin, () -> {
             if (max == min)
                 rollBoogeyman(max);

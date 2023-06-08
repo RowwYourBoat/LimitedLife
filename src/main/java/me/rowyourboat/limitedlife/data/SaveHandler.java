@@ -133,11 +133,15 @@ public class SaveHandler {
     public void cureBoogeyman(String boogeymanToCureUUID, boolean awardTime) {
         getBoogeymenList().remove(boogeymanToCureUUID);
         Player player = Bukkit.getPlayer(UUID.fromString(boogeymanToCureUUID));
-        if (awardTime)
+        if (awardTime) {
             addPlayerTime(Bukkit.getOfflinePlayer(UUID.fromString(boogeymanToCureUUID)), plugin.getConfig().getLong("boogeyman.time-gain-on-boogey-kill"));
-        if (player != null) {
-            player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "You've been cured!", ChatColor.GREEN + "+" + SecondsToClockFormat.convert(plugin.getConfig().getLong("boogeyman.time-gain-on-boogey-kill"), false), 10, 40, 10);
-            player.playSound(player, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 3, 1);
+            if (player != null)
+                player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "You've been cured!", ChatColor.GREEN + "+" + SecondsToClockFormat.convert(plugin.getConfig().getLong("boogeyman.time-gain-on-boogey-kill"), false), 10, 40, 10);
+        }
+        if (!awardTime && player != null) {
+            player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "You've been cured!", null, 10, 40, 10);
+            if (plugin.getConfig().getBoolean("sound-effects.enabled"))
+                player.playSound(player, Sound.valueOf(plugin.getConfig().getString("sound-effects.boogeyman-cured")), 1, 1);
         }
         save();
     }
@@ -147,7 +151,8 @@ public class SaveHandler {
             Player player = Bukkit.getPlayer(uuidString);
             if (player != null) {
                 player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "You've been cured!", null, 10, 40, 10);
-                player.playSound(player, Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 3, 1);
+                if (LimitedLife.plugin.getConfig().getBoolean("sound-effects.enabled"))
+                    player.playSound(player, Sound.valueOf(LimitedLife.plugin.getConfig().getString("sound-effects.boogeyman-cured")), 1, 1);
             }
         });
         getBoogeymenList().clear();
@@ -159,7 +164,8 @@ public class SaveHandler {
             Player player = Bukkit.getPlayer(UUID.fromString(uuidString));
             if (player != null) {
                 player.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "You have failed!", ChatColor.GRAY + "Your time has been lowered to the next colour!", 10, 60, 10);
-                player.playSound(player, Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 1);
+                if (LimitedLife.plugin.getConfig().getBoolean("sound-effects.enabled"))
+                    player.playSound(player, Sound.valueOf(LimitedLife.plugin.getConfig().getString("sound-effects.boogeyman-failed")), 1, 1);
 
                 long timeLeft = LimitedLife.SaveHandler.getPlayerTimeLeft(player);
                 if (timeLeft > plugin.getConfig().getInt("name-colour-thresholds.yellow-name"))
