@@ -49,9 +49,10 @@ A few recipes have been altered/added in order to enhance your experience. All o
 The plugin features a well documented and relatively detailed config file, making it very easy to customize to your specific needs. The defaults values may be found [here](https://github.com/RowwYourBoat/LimitedLife/blob/master/src/main/resources/config.yml).
 
 ## Additional Information
-Resource Pack for custom sound effects during countdown/boogeyman selection (recommended):  
+Resource Pack for custom sound effects during countdown/boogeyman selection (recommended):
 https://www.dropbox.com/s/xqlpwrfgnaekctr/Limited%20Life%20Resources.zip?dl=1  
 Paste that download link in the server.properties file in the empty resource-pack field to prompt it for all players. To force it, set require-resource-pack to true.  
+*The provided resource pack is outdated, and will only work as intended for version 1.3.1 and prior. You will have to update it yourself.*  
 <br>
 To enable coloured names in chat while using (a fork of) PaperMC, navigate to the paper-world-defaults.yml file and change the value "use-vanilla-world-scoreboard-name-coloring" to true. You may find this file here: main folder > config > paper-world-defaults.yml  
 <br>
