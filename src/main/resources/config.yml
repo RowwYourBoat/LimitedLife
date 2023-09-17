@@ -1,5 +1,5 @@
 ## Set to -1 in order to disable configuration update reminders
-config-version: 5
+config-version: 6
 
 
 
@@ -17,6 +17,9 @@ timer:
   ## This only applies if recipes.revival-item.enabled is set to true
   ## default: 10800 (3 hours)
   seconds-on-revival: 10800
+
+  ## When set to true, offline players will not lose time.
+  ignore-offline-players: false
 
 
 

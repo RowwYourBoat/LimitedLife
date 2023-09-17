@@ -49,10 +49,12 @@ public class GlobalTimerTask {
                     long playerTimeLeft = SaveHandler.getPlayerTimeLeft(offlinePlayer);
                     if (activeTimerList.contains(offlinePlayer.getUniqueId())) {
 
-                        if (playerTimeLeft <= 0)
-                            SaveHandler.setPlayerTimeLeft(offlinePlayer, 0);
-                        else
-                            SaveHandler.setPlayerTimeLeft(offlinePlayer, playerTimeLeft - 1);
+                        if (offlinePlayer.isOnline() || !plugin.getConfig().getBoolean("timer.ignore-offline-players")) {
+                            if (playerTimeLeft <= 0)
+                                SaveHandler.setPlayerTimeLeft(offlinePlayer, 0);
+                            else
+                                SaveHandler.setPlayerTimeLeft(offlinePlayer, playerTimeLeft - 1);
+                        }
 
                         if (offlinePlayer.isOnline()) {
 
