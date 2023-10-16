@@ -106,10 +106,11 @@ public class RequestHandler {
                 return;
             }
 
-            if (response.statusCode() == 201)
-                logger.info("[DISCORD] " + response.body());
-            else
-                logger.warning("[DISCORD] " + response.body());
+            if (LimitedLife.plugin.getConfig().getBoolean("discord-integration.log-responses"))
+                if (response.statusCode() == 201)
+                    logger.info("[DISCORD] " + response.body());
+                else
+                    logger.warning("[DISCORD] " + response.body());
 
         });
 

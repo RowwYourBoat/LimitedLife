@@ -191,7 +191,7 @@ custom-chat-format:
 
 
 ## Please refer to the following GitHub file for a guide on how to set this up:
-## https://github.com/RowwYourBoat/LimitedLife
+## https://github.com/RowwYourBoat/LimitedLifeIntegration/blob/master/README.md
 discord-integration:
   enabled: false
   server-id: 0
