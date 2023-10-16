@@ -56,22 +56,37 @@ The plugin features a well documented and relatively detailed config file, makin
 <br>
 <br>
 ## Discord Integration
+Read full documentation [here](https://github.com/RowwYourBoat/LimitedLifeIntegration). <br> <br>
 I've created a [Discord Bot](https://github.com/RowwYourBoat/LimitedLifeIntegration) with which the plugin is able to communicate.
 This allows for the colour of everyone's name in your Discord Server to be synced with the colour of their name in your Minecraft Server.
-Follow these steps in order to set this up:
-1. **Invite the bot to your Discord Server** <br>
-    [Click here](https://discord.com/api/oauth2/authorize?client_id=1160212770382430328&permissions=268503040&scope=applications.commands%20bot) to be prompted to do so, and
-    select the server to which you want to add the bot. <br>
-    Follow the rest of the invitation process until the bot has joined your Discord Server. <br><br>
+Follow these steps in order to set this up: <br>
+Can't get it to work? Feel free to ask for help in my [Discord Support Server](https://www.discord.gg/phJHjvrdE5)!
 
-2. **Set the Server ID in the plugin's configuration file to your own** <br>
-    In order to get this ID, you will first need to enable Developer Mode in your Discord settings. <br>
+1. **Invite the bot to your Discord Server** <br>
+    [Click here](https://discord.com/api/oauth2/authorize?client_id=1160212770382430328&permissions=268435456&scope=bot%20applications.commands) to be prompted to do so, and
+    select the server to which you want to add the bot. <br>
+    Follow the rest of the invitation process until the bot has joined your Discord Server. <br> <br>
+
+2. **Customize the newly added roles** <br>
+   Upon joining your server, the bot will immediately create 5 coloured roles. You may change these to your heart's content (name, position, permissions, etc.) – just don't delete them. <br> <br>
+
+3. **Set the Server ID in the plugin's configuration file to your own** <br>
+    To get this ID, you will first need to enable Developer Mode in your Discord settings. <br>
     Open your Discord Settings, and navigate to the Advanced page which may be found under the App Settings tab. <br>
     Enable Developer Mode, exit out of your settings, and right-click your Discord Server's icon on the left. <br>
-    A new button should've appeared, appropriately named "Copy Server ID". Click that in order to copy your Server ID. <br><br>
-
+    A new button should've appeared, appropriately named "Copy Server ID". Click that to copy your Server ID. <br>
+    
     Now that you've retrieved your Server ID, navigate to the plugin's config.yml file. (server\plugins\LimitedLife\config.yml) <br>
-    Scroll down until you stumble across the 'discord-integration' section, and set the server-id value to the Server ID you copied earlier. <br> <br>
+    Scroll down until you stumble across the `discord-integration` section. Here, you must set the `server-id` value to the Server ID you copied earlier.
+    Also make sure to set the `enabled` value to `true`. <br> <br>
+
+4. **Link your Discord profile to your Minecraft account** <br>
+   Run the command `/link username:YOUR_MINECRAFT_USERNAME` in your Discord server. This will give you the green coloured role,
+   which will be updated (if necessary) next time you start the timer within your Minecraft Server. <br> <br>
+
+5. **Test whether it's working** <br>
+   Start your Minecraft Server as well as the plugin's timer. Now you may simply use the `/lf modifytime` command until the colour of your name changes (Example: `/lf modifytime PLAYER -10h`).
+   If your role doesn't get updated, please check the server's console for any error messages. Can't get it to work? Join my [Discord Support Server](https://www.discord.gg/phJHjvrdE5)! <br> <br>
 
 ## Additional Information
 To enable coloured names in chat while using (a fork of) PaperMC, navigate to the paper-world-defaults.yml file and change the value "use-vanilla-world-scoreboard-name-coloring" to true. You may find this file here: main folder > config > paper-world-defaults.yml  
