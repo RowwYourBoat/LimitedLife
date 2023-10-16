@@ -1,9 +1,11 @@
 package me.rowyourboat.limitedlife.scoreboard;
 
 import me.rowyourboat.limitedlife.LimitedLife;
+import me.rowyourboat.limitedlife.discord.RequestHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
@@ -12,7 +14,7 @@ import org.bukkit.scoreboard.Team;
 
 public class TeamHandler {
 
-    private final JavaPlugin plugin;
+    private final FileConfiguration config;
     private final Scoreboard scoreboard;
 
     private final Team darkGreenName;
@@ -22,7 +24,10 @@ public class TeamHandler {
     private final Team grayName;
 
     public TeamHandler() {
-        this.plugin = LimitedLife.plugin;
+
+        JavaPlugin plugin = LimitedLife.plugin;
+        this.config = plugin.getConfig();
+
         ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         if (scoreboardManager == null) plugin.getLogger().severe("Unable to locate the scoreboard manager! Have you initialized a world yet? Please restart the server to fix this.");
         scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
@@ -49,52 +54,85 @@ public class TeamHandler {
         grayName.setColor(ChatColor.GRAY);
 
         Bukkit.getOnlinePlayers().forEach(player -> changeTeamAndGamemodeAccordingly(player, LimitedLife.SaveHandler.getPlayerTimeLeft(player)));
+
     }
 
     public void changeTeamAndGamemodeAccordingly(Player player, long timeLeft) {
+
+        RequestHandler requestHandler = LimitedLife.RequestHandler;
+
         if (timeLeft <= -1) {
+
             scoreboard.getTeams().forEach(team -> {
                 if (team.hasEntry(player.getName()))
                     team.removeEntry(player.getName());
             });
             player.setGameMode(GameMode.ADVENTURE);
             LimitedLife.SaveHandler.removePlayerDeathMark(player);
+
         } else if (timeLeft == 0) {
+
             if (!grayName.hasEntry(player.getName())) {
+
                 grayName.addEntry(player.getName());
                 player.setGameMode(GameMode.SPECTATOR);
+
                 if (!LimitedLife.SaveHandler.getMarkedAsDeadList().contains(player.getUniqueId().toString())) {
                     for (Player onlinePlayer : Bukkit.getOnlinePlayers())
                         onlinePlayer.sendTitle(ChatColor.RED + player.getName(), "ran out of time!", 20, 100, 20);
-                    if (LimitedLife.plugin.getConfig().getBoolean("other.lightning-strike-on-final-death"))
+                    if (config.getBoolean("other.lightning-strike-on-final-death"))
                         player.getWorld().strikeLightningEffect(player.getLocation());
                 }
                 LimitedLife.SaveHandler.markPlayerAsDead(player);
+
+                requestHandler.addToRoleUpdateQueue(player.getUniqueId(), "gray");
+
             }
-        } else if (timeLeft < plugin.getConfig().getInt("name-colour-thresholds.red-name")) {
+
+        } else if (timeLeft < config.getInt("name-colour-thresholds.red-name")) {
+
             if (!redName.hasEntry(player.getName())) {
+
                 redName.addEntry(player.getName());
                 player.setGameMode(GameMode.SURVIVAL);
                 LimitedLife.SaveHandler.removePlayerDeathMark(player);
+                requestHandler.addToRoleUpdateQueue(player.getUniqueId(), "red");
+
             }
-        } else if (timeLeft < plugin.getConfig().getInt("name-colour-thresholds.yellow-name")) {
+
+        } else if (timeLeft < config.getInt("name-colour-thresholds.yellow-name")) {
+
             if (!yellowName.hasEntry(player.getName())) {
+
                 yellowName.addEntry(player.getName());
                 player.setGameMode(GameMode.SURVIVAL);
                 LimitedLife.SaveHandler.removePlayerDeathMark(player);
+                requestHandler.addToRoleUpdateQueue(player.getUniqueId(), "yellow");
+
             }
-        } else if ((plugin.getConfig().getBoolean("name-colour-thresholds.dark-green-names") && timeLeft < plugin.getConfig().getInt("name-colour-thresholds.green-name")) || !plugin.getConfig().getBoolean("name-colour-thresholds.dark-green-names")) {
+
+        } else if ((config.getBoolean("name-colour-thresholds.dark-green-names") && timeLeft < config.getInt("name-colour-thresholds.green-name")) || !config.getBoolean("name-colour-thresholds.dark-green-names")) {
+
             if (!greenName.hasEntry(player.getName())) {
+
                 greenName.addEntry(player.getName());
                 player.setGameMode(GameMode.SURVIVAL);
                 LimitedLife.SaveHandler.removePlayerDeathMark(player);
+                requestHandler.addToRoleUpdateQueue(player.getUniqueId(), "green");
+
             }
+
         } else {
+
             if (!darkGreenName.hasEntry(player.getName())) {
+
                 darkGreenName.addEntry(player.getName());
                 player.setGameMode(GameMode.SURVIVAL);
                 LimitedLife.SaveHandler.removePlayerDeathMark(player);
+                requestHandler.addToRoleUpdateQueue(player.getUniqueId(), "dark_green");
+
             }
+
         }
     }
 

@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,13 +21,15 @@ import java.util.UUID;
 
 public class SaveHandler {
 
-    private final JavaPlugin plugin;
+    private final FileConfiguration config;
 
     private final File saveFile;
     private final YamlConfiguration saveYaml;
 
     public SaveHandler() {
-        this.plugin = LimitedLife.plugin;
+        JavaPlugin plugin = LimitedLife.plugin;
+        this.config = plugin.getConfig();
+        
         saveFile = new File(plugin.getDataFolder(), "data" + File.separator + "save.yml");
         saveYaml = YamlConfiguration.loadConfiguration(saveFile);
         if (!saveYaml.contains("marked-as-dead-list")) {
@@ -62,7 +65,7 @@ public class SaveHandler {
                 if (bestPlayerData != null)
                     saveYaml.set("plugin-timer", bestPlayerData.getLong("TimeRemaining"));
             } else
-                saveYaml.set("plugin-timer", plugin.getConfig().getLong("timer.start-time-in-seconds"));
+                saveYaml.set("plugin-timer", config.getLong("timer.start-time-in-seconds"));
 
             save();
         }
@@ -72,7 +75,8 @@ public class SaveHandler {
         try {
             saveYaml.save(saveFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            LimitedLife.plugin.getLogger().severe("Something went wrong while attempting to save:");
+            LimitedLife.plugin.getLogger().severe(e.getMessage());
         }
     }
 
@@ -134,14 +138,14 @@ public class SaveHandler {
         getBoogeymenList().remove(boogeymanToCureUUID);
         Player player = Bukkit.getPlayer(UUID.fromString(boogeymanToCureUUID));
         if (awardTime) {
-            addPlayerTime(Bukkit.getOfflinePlayer(UUID.fromString(boogeymanToCureUUID)), plugin.getConfig().getLong("boogeyman.time-gain-on-boogey-kill"));
+            addPlayerTime(Bukkit.getOfflinePlayer(UUID.fromString(boogeymanToCureUUID)), config.getLong("boogeyman.time-gain-on-boogey-kill"));
             if (player != null)
-                player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "You've been cured!", ChatColor.GREEN + "+" + SecondsToClockFormat.convert(plugin.getConfig().getLong("boogeyman.time-gain-on-boogey-kill"), false), 10, 40, 10);
+                player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "You've been cured!", ChatColor.GREEN + "+" + SecondsToClockFormat.convert(config.getLong("boogeyman.time-gain-on-boogey-kill"), false), 10, 40, 10);
         }
         if (!awardTime && player != null) {
             player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "You've been cured!", null, 10, 40, 10);
-            if (plugin.getConfig().getBoolean("sound-effects.enabled"))
-                player.playSound(player, Sound.valueOf(plugin.getConfig().getString("sound-effects.boogeyman-cured")), 1, 1);
+            if (config.getBoolean("sound-effects.enabled"))
+                player.playSound(player, Sound.valueOf(config.getString("sound-effects.boogeyman-cured")), 1, 1);
         }
         save();
     }
@@ -151,8 +155,8 @@ public class SaveHandler {
             Player player = Bukkit.getPlayer(uuidString);
             if (player != null) {
                 player.sendTitle(ChatColor.GREEN + ChatColor.BOLD.toString() + "You've been cured!", null, 10, 40, 10);
-                if (LimitedLife.plugin.getConfig().getBoolean("sound-effects.enabled"))
-                    player.playSound(player, Sound.valueOf(LimitedLife.plugin.getConfig().getString("sound-effects.boogeyman-cured")), 1, 1);
+                if (config.getBoolean("sound-effects.enabled"))
+                    player.playSound(player, Sound.valueOf(config.getString("sound-effects.boogeyman-cured")), 1, 1);
             }
         });
         getBoogeymenList().clear();
@@ -164,14 +168,14 @@ public class SaveHandler {
             Player player = Bukkit.getPlayer(UUID.fromString(uuidString));
             if (player != null) {
                 player.sendTitle(ChatColor.RED + ChatColor.BOLD.toString() + "You have failed!", ChatColor.GRAY + "Your time has been lowered to the next colour!", 10, 60, 10);
-                if (LimitedLife.plugin.getConfig().getBoolean("sound-effects.enabled"))
-                    player.playSound(player, Sound.valueOf(LimitedLife.plugin.getConfig().getString("sound-effects.boogeyman-failed")), 1, 1);
+                if (config.getBoolean("sound-effects.enabled"))
+                    player.playSound(player, Sound.valueOf(config.getString("sound-effects.boogeyman-failed")), 1, 1);
 
                 long timeLeft = LimitedLife.SaveHandler.getPlayerTimeLeft(player);
-                if (timeLeft > plugin.getConfig().getInt("name-colour-thresholds.yellow-name"))
-                    LimitedLife.SaveHandler.setPlayerTimeLeft(player, plugin.getConfig().getInt("name-colour-thresholds.yellow-name"));
-                else if (timeLeft > plugin.getConfig().getInt("name-colour-thresholds.red-name"))
-                    LimitedLife.SaveHandler.setPlayerTimeLeft(player, plugin.getConfig().getInt("name-colour-thresholds.red-name"));
+                if (timeLeft > config.getInt("name-colour-thresholds.yellow-name"))
+                    LimitedLife.SaveHandler.setPlayerTimeLeft(player, config.getInt("name-colour-thresholds.yellow-name"));
+                else if (timeLeft > config.getInt("name-colour-thresholds.red-name"))
+                    LimitedLife.SaveHandler.setPlayerTimeLeft(player, config.getInt("name-colour-thresholds.red-name"));
                 else
                     LimitedLife.SaveHandler.setPlayerTimeLeft(player, 0);
             }
@@ -200,9 +204,9 @@ public class SaveHandler {
 
 
     public String convertTimeToTeamName(long time) {
-        if (time > plugin.getConfig().getLong("name-colour-thresholds.yellow-name"))
+        if (time > config.getLong("name-colour-thresholds.yellow-name"))
             return "GREEN";
-        else if (time > plugin.getConfig().getLong("name-colour-thresholds.red-name"))
+        else if (time > config.getLong("name-colour-thresholds.red-name"))
             return "YELLOW";
         else
             return "RED";

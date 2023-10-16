@@ -25,7 +25,7 @@ You may configure the plugin to limit the level on enchantments when combined in
 Because some potions may be considered overpowered for a series like this, I've implemented a way to toggle every existing potion individually.  
 
 ### Disabling Certain Items
-Enchantment Tables are very configurable. You may decide whether they're craftable, breakable and you may also make them immortal when they're on the ground as an item.  
+Enchantment Tables are very configurable. You may decide whether they're craftable, breakable, and you may also make them immortal when they're on the ground as an item.  
 Golden Apples, as well as Enchanted Golden Apples, may be toggled individually.  
 Helmets are unobtainable by default, but may be enabled.  
 Bookshelves are unobtainable by default, but may be enabled.  
@@ -46,17 +46,37 @@ A few recipes have been altered/added in order to enhance your experience. All o
 ![Slimeball Recipe](https://user-images.githubusercontent.com/75913945/234308028-8ef70336-254f-4a8f-9e81-840d4eb488f2.png)  
 <br>  
 ### Extensive Configuration / Customizability
-The plugin features a well documented and relatively detailed config file, making it very easy to customize to your specific needs. The defaults values may be found [here](https://github.com/RowwYourBoat/LimitedLife/blob/master/src/main/resources/config.yml).
+The plugin features a well documented and relatively detailed config file, making it very easy to customize to your specific needs. The default values may be found [here](https://github.com/RowwYourBoat/LimitedLife/blob/master/src/main/resources/config.yml).
+<br>
+<br>
+<br>
+<br>
+<br>
+![Discord Integration](https://cdn.discordapp.com/attachments/1131903425123196968/1162355139248672860/discord-banner.png?ex=653ba294&is=65292d94&hm=e7b4f6680e7e12cf239c7acffbd3b14696faff12a43d7e7fe350d7220047ceda&)
+<br>
+<br>
+## Discord Integration
+I've created a [Discord Bot](https://github.com/RowwYourBoat/LimitedLifeIntegration) with which the plugin is able to communicate.
+This allows for the colour of everyone's name in your Discord Server to be synced with the colour of their name in your Minecraft Server.
+Follow these steps in order to set this up:
+1. **Invite the bot to your Discord Server** <br>
+    [Click here](https://discord.com/api/oauth2/authorize?client_id=1160212770382430328&permissions=268503040&scope=applications.commands%20bot) to be prompted to do so, and
+    select the server to which you want to add the bot. <br>
+    Follow the rest of the invitation process until the bot has joined your Discord Server. <br><br>
+
+2. **Set the Server ID in the plugin's configuration file to your own** <br>
+    In order to get this ID, you will first need to enable Developer Mode in your Discord settings. <br>
+    Open your Discord Settings, and navigate to the Advanced page which may be found under the App Settings tab. <br>
+    Enable Developer Mode, exit out of your settings, and right-click your Discord Server's icon on the left. <br>
+    A new button should've appeared, appropriately named "Copy Server ID". Click that in order to copy your Server ID. <br><br>
+
+    Now that you've retrieved your Server ID, navigate to the plugin's config.yml file. (server\plugins\LimitedLife\config.yml) <br>
+    Scroll down until you stumble across the 'discord-integration' section, and set the server-id value to the Server ID you copied earlier. <br> <br>
 
 ## Additional Information
-Resource Pack for custom sound effects during countdown/boogeyman selection (recommended):
-https://www.dropbox.com/s/xqlpwrfgnaekctr/Limited%20Life%20Resources.zip?dl=1  
-Paste that download link in the server.properties file in the empty resource-pack field to prompt it for all players. To force it, set require-resource-pack to true.  
-*The provided resource pack is outdated, and will only work as intended for version 1.3.1 and prior. You will have to update it yourself.*  
-<br>
 To enable coloured names in chat while using (a fork of) PaperMC, navigate to the paper-world-defaults.yml file and change the value "use-vanilla-world-scoreboard-name-coloring" to true. You may find this file here: main folder > config > paper-world-defaults.yml  
 <br>
-When the global timer's active, offline players will still lose time.  
+When the global timer's active, offline players will still lose time unless disabled in the configuration file.  
 <br>
 For support, please join my [Discord Support Server](https://discord.com/invite/phJHjvrdE5)!
 <br>
