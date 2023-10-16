@@ -1,5 +1,5 @@
 ## Set to -1 in order to disable configuration update reminders
-config-version: 6
+config-version: 7
 
 
 
@@ -186,6 +186,24 @@ custom-chat-format:
   enabled: false
   ## Make sure to include 'player' and 'message' in the format, as they are placeholders!
   format: "player: message"
+
+
+
+
+## Please refer to the following GitHub file for a guide on how to set this up:
+## https://github.com/RowwYourBoat/LimitedLife
+discord-integration:
+  enabled: false
+  server-id: 0
+  log-responses: true
+
+  ##############################################################################
+  ## DO NOT CHANGE THE FOLLOWING 2 SETTINGS UNLESS YOU KNOW WHAT YOU'RE DOING ##
+  ##############################################################################
+  endpoint: "http://limitedlifeintegration.dedimc.io:30336/api"
+
+  ## YOUR UNIQUE PASSWORD TO THE API; DO NOT SHARE!
+  key: null
 
 
 
