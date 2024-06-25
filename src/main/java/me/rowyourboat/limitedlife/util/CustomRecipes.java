@@ -42,7 +42,6 @@ public class CustomRecipes {
                     "LXL"
             );
             craftable_saddleShapedRecipe.setIngredient('L', Material.LEATHER);
-            craftable_saddleShapedRecipe.setIngredient('X', Material.AIR);
             Bukkit.addRecipe(craftable_saddleShapedRecipe);
             namespacedKeyList.add(craftable_saddleShapedRecipe.getKey());
         }
@@ -71,7 +70,6 @@ public class CustomRecipes {
             slimeballShapedRecipe.setIngredient('B', Material.BONE_MEAL);
             slimeballShapedRecipe.setIngredient('S', Material.SUGAR_CANE);
             slimeballShapedRecipe.setIngredient('W', Material.WATER_BUCKET);
-            slimeballShapedRecipe.setIngredient('X', Material.AIR);
             Bukkit.addRecipe(slimeballShapedRecipe);
             namespacedKeyList.add(slimeballShapedRecipe.getKey());
         }
