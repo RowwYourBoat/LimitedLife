@@ -1,34 +1,79 @@
 ## What's Limited Life?
+
+<br>
+
 ### Basics
-Limited Life is a hardcore-like gamemode, where you only have 24 hours to live. Every time you die, you lose 1 hour of time. Every time you kill someone, you gain 30 minutes of time. Players with more than 16 hours of time remaining will have a green coloured name, players with more than 8 hours of time remaining will have a yellow coloured name, and finally, players with less than 8 remaining will have a red coloured name. You're only allowed to kill people who have a "higher" colour than you (except for red names). So green names aren't allowed to kill anyone, yellow names are only allowed to kill green names and red names are allowed to kill anyone. There's one exception to this rule; The Boogeyman!
+Limited Life is a hardcore-like gamemode, in which players only have 24 hours to live. Each death is penalized with one hour of time lost. Killing someone rewards the player with 30 minutes. The color of a player's name is determined by the amount of hours they have left (green for >16, yellow for >8, red for >0). Players are only allowed to kill those who are on a higher color stage than them. There's one exception to this rule; The Boogeyman!
+
+<br>
 
 ### Boogeyman
-Once every session, the Boogeyman should be rolled. When chosen as the Boogeyman, you're required to kill someone before the end of the session. Failure to do so will result in your time to drop until it reaches the next colour. That means you could lose up to 8 hours of time if you fail! You can choose whether red names may be chosen as the boogeyman.
+The Boogeyman is recommended to be rolled at least once per session. When a player is chosen as the Boogeyman, they're required to kill another player before the end of the session. Failure to do so will result in their time to drop until it reaches the next color stage. That means players could lose up to 8 hours of time if they fail!
+
+<br>
 
 ### Recommendations
-Limited Life is intended to be played with around 14 players, on a 700x700 map.  
-The server shouldn't be on 24/7. Instead, game sessions should be hosted, to make sure everyone's able to progress at the same time. I personally recommend keeping them around 3 hours long, just like in the [real series](https://youtu.be/gzaIHdjLIyM).
+Limited Life is intended to be played with around 14 players on a 700x700 map.  
+The server shouldn't be on 24/7. 3 hour long "sessions" should be hosted instead, ensuring all players are able to progress at the same time. This is also how it works in the [real series](https://youtu.be/gzaIHdjLIyM).
+
+<br>
+<br>
 
 ## Plugin Features
+
+<br>
+
 ### Commands
-**/lf help <boogeyman|modifytime|timer>** - Provides a detailed explanation of the specified command.  
-**/lf reload** - Reloads the plugin and its data files  
-**/lf timer <start|pause|reset> [player]** - Starts/Resumes and pauses the timer for everyone, or the specified player. Also resets timer data.  
-**/lf modifytime <player> <+|->\<num><h|m|s>** - Adds/subtracts from the specified player's time in hours, minutes or seconds. (Last Argument Example: -3h)  
-**/lf gettime <player>** - Returns the amount of time the specified player has remaining.  
-**/lf boogeyman <roll|cure|punish|clear> [skiprolldelay]** - Rolls the boogeyman, cures the specified player, punishes all boogeymen for not securing a kill, and clears the Boogeyman list. The last argument only applies to the "roll" command. It will cause the configurable timer to be skipped.  
+- **/lf reload** - Reloads the plugin and its data files.  
+
+<br>
+
+- **/lf modifytime <player> <+|-><num><h|m|s>** - Manage the amount of time a player has. Example for removing 3 hours from someone: "/lf modifytime Rowa_n -3h".  
+
+<br>
+
+- **/lf gettime <player>** - Returns the amount of time the specified player has remaining.  
+
+<br>
+
+- **/lf boogeyman <cancel|clear|cure|punish|roll> [skiprolldelay]**
+    - **cancel** - Cancels the pending boogeyman roll.
+    - **clear** - Clears the current boogeyman list without penalties or notifications.
+    - **cure** - Cures all boogeymen with a notification.
+    - **punish** - Inflict a time penalty for all boogeymen.
+    - **roll** - Initialize a pending boogeyman roll.
+         - **skiprolldelay** - Will cause the countdown to be skipped.  
+
+<br>
+
+- **/lf timer <start|pause|reset> [player]**
+    - **start** - Starts/Resumes the global timer or that of the specified player.
+    - **pause** - Pauses the global timer or that of the specified player.
+    - **reset** - Resets the global timer or that of the specified player.
+
+<br>
+
+- **/lf help <boogeyman|modifytime|timer>** - Provides an explanation about the specified command.  
+
+<br>
 
 ### Enchantment Limitations
 You may configure the plugin to limit the level on enchantments when combined in an anvil. This is set to level 2 by default.  
 
+<br>
+
 ### Potion Whitelist
 Because some potions may be considered overpowered for a series like this, I've implemented a way to toggle every existing potion individually.  
+
+<br>
 
 ### Disabling Certain Items
 Enchantment Tables are very configurable. You may decide whether they're craftable, breakable, and you may also make them immortal when they're on the ground as an item.  
 Golden Apples, as well as Enchanted Golden Apples, may be toggled individually.  
 Helmets are unobtainable by default, but may be enabled.  
 Bookshelves are unobtainable by default, but may be enabled.  
+
+<br>
 
 ### Custom Recipes
 A few recipes have been altered/added in order to enhance your experience. All of them may be toggled individually.  
@@ -44,7 +89,9 @@ A few recipes have been altered/added in order to enhance your experience. All o
 
 **Craftable Slimeball**  
 ![Slimeball Recipe](https://user-images.githubusercontent.com/75913945/234308028-8ef70336-254f-4a8f-9e81-840d4eb488f2.png)  
+
 <br>  
+
 ### Extensive Configuration / Customizability
 The plugin features a well documented and relatively detailed config file, making it very easy to customize to your specific needs. The default values may be found [here](https://github.com/RowwYourBoat/LimitedLife/blob/master/src/main/resources/config.yml).
 <br>
@@ -52,47 +99,16 @@ The plugin features a well documented and relatively detailed config file, makin
 <br>
 <br>
 <br>
-![Discord Integration](https://cdn.discordapp.com/attachments/1131903425123196968/1162355139248672860/discord-banner.png?ex=653ba294&is=65292d94&hm=e7b4f6680e7e12cf239c7acffbd3b14696faff12a43d7e7fe350d7220047ceda&)
+## [Discord Integration Guide](https://github.com/RowwYourBoat/LimitedLifeIntegration)
 <br>
 <br>
-## Discord Integration
-Read full documentation [here](https://github.com/RowwYourBoat/LimitedLifeIntegration). <br> <br>
-I've created a [Discord Bot](https://github.com/RowwYourBoat/LimitedLifeIntegration) with which the plugin is able to communicate.
-This allows for the colour of everyone's name in your Discord Server to be synced with the colour of their name in your Minecraft Server.
-Follow these steps in order to set this up: <br>
-Can't get it to work? Feel free to ask for help in my [Discord Support Server](https://www.discord.gg/phJHjvrdE5)!
-
-1. **Invite the bot to your Discord Server** <br>
-    [Click here](https://discord.com/api/oauth2/authorize?client_id=1160212770382430328&permissions=268435456&scope=bot%20applications.commands) to be prompted to do so, and
-    select the server to which you want to add the bot. <br>
-    Follow the rest of the invitation process until the bot has joined your Discord Server. <br> <br>
-
-2. **Customize the newly added roles** <br>
-   Upon joining your server, the bot will immediately create 5 coloured roles. You may change these to your heart's content (name, position, permissions, etc.) – just don't delete them. <br> <br>
-
-3. **Set the Server ID in the plugin's configuration file to your own** <br>
-    To get this ID, you will first need to enable Developer Mode in your Discord settings. <br>
-    Open your Discord Settings, and navigate to the Advanced page which may be found under the App Settings tab. <br>
-    Enable Developer Mode, exit out of your settings, and right-click your Discord Server's icon on the left. <br>
-    A new button should've appeared, appropriately named "Copy Server ID". Click that to copy your Server ID. <br>
-    
-    Now that you've retrieved your Server ID, navigate to the plugin's config.yml file. (server\plugins\LimitedLife\config.yml) <br>
-    Scroll down until you stumble across the `discord-integration` section. Here, you must set the `server-id` value to the Server ID you copied earlier.
-    Also make sure to set the `enabled` value to `true`. <br> <br>
-
-4. **Link your Discord profile to your Minecraft account** <br>
-   Run the command `/link username:YOUR_MINECRAFT_USERNAME` in your Discord server. This will give you the green coloured role,
-   which will be updated (if necessary) next time you start the timer within your Minecraft Server. <br> <br>
-
-5. **Test whether it's working** <br>
-   Start your Minecraft Server as well as the plugin's timer. Now you may simply use the `/lf modifytime` command until the colour of your name changes (Example: `/lf modifytime PLAYER -10h`).
-   If your role doesn't get updated, please check the server's console for any error messages. Can't get it to work? Join my [Discord Support Server](https://www.discord.gg/phJHjvrdE5)! <br> <br>
+<br>
 
 ## Additional Information
-To enable coloured names in chat while using (a fork of) PaperMC, navigate to the paper-world-defaults.yml file and change the value "use-vanilla-world-scoreboard-name-coloring" to true. You may find this file here: main folder > config > paper-world-defaults.yml  
+To enable coloured names in chat while using (a fork of) PaperMC, navigate to the paper-world-defaults.yml file and change the value "use-vanilla-world-scoreboard-name-coloring" to true. You may find this file here: Server Directory\config\paper-world-defaults.yml
 <br>
-When the global timer's active, offline players will still lose time unless disabled in the configuration file.  
+Whilst the global timer's active, players whom are offline will still lose time unless disabled in the configuration file.  
 <br>
 For support, please join my [Discord Support Server](https://discord.com/invite/phJHjvrdE5)!
 <br>
-Credits to [Grian](https://youtu.be/gzaIHdjLIyM) for coming up with the idea for Limited Life!
+Credits to [Grian](https://youtu.be/gzaIHdjLIyM) and his team for coming up with the idea for Limited Life!
