@@ -7,6 +7,7 @@ import me.rowyourboat.limitedlife.countdown.GlobalTimerTask;
 import me.rowyourboat.limitedlife.data.SaveHandler;
 import me.rowyourboat.limitedlife.discord.RequestHandler;
 import me.rowyourboat.limitedlife.listeners.*;
+import me.rowyourboat.limitedlife.placeholders.Expansion;
 import me.rowyourboat.limitedlife.scoreboard.TeamHandler;
 import me.rowyourboat.limitedlife.util.CustomRecipes;
 import org.bstats.bukkit.Metrics;
@@ -86,6 +87,11 @@ public final class LimitedLife extends JavaPlugin {
                 }
             }
         }
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null)
+            logger.warning("PlaceholderAPI was not found in the server's plugins directory! Though not required, please download it if you'd like to make use of it!");
+        else
+            new Expansion().register();
 
         // Indicate that the plugin has been loaded
         ConsoleCommandSender console = Bukkit.getConsoleSender();

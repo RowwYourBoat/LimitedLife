@@ -208,8 +208,10 @@ public class SaveHandler {
             return "GREEN";
         else if (time > config.getLong("name-colour-thresholds.red-name"))
             return "YELLOW";
-        else
+        else if (time > 0)
             return "RED";
+        else
+            return "GRAY";
     }
 
     @SuppressWarnings("unchecked")
