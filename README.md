@@ -28,7 +28,7 @@ The server shouldn't be on 24/7. 3 hour long "sessions" should be hosted instead
 
 <br>
 
-- **/lf modifytime <player> <+|-><num><h|m|s>** - Manage the amount of time a player has. Example for removing 3 hours from someone: "/lf modifytime Rowa_n -3h".  
+- **/lf modifytime <player> <+|->\<num><h|m|s>** - Manage the amount of time a player has. Example for removing 3 hours from someone: "/lf modifytime Rowa_n -3h".  
 
 <br>
 
