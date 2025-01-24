@@ -4,12 +4,12 @@ import me.rowan.limitedlife.LimitedLife;
 import me.rowan.limitedlife.commands.subcommands.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.Location;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.*;
 
 public class MainCommandExecutor implements CommandExecutor {
 
@@ -23,6 +23,34 @@ public class MainCommandExecutor implements CommandExecutor {
         }
         if (!(sender instanceof ConsoleCommandSender))
             Bukkit.getConsoleSender().sendMessage(finalMessage);
+    }
+
+    public static List<Player> getPlayersFromArgument(CommandSender sender, String argument) {
+        Player playerArg = Bukkit.getPlayer(argument);
+        if (playerArg != null) return new ArrayList<>(List.of(playerArg));
+
+        List<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
+        List<String> selectors = new ArrayList<>(Arrays.asList("@a", "@p", "@r"));
+        if (!selectors.contains(argument)) return null;
+
+        if (argument.equalsIgnoreCase("@a")) return onlinePlayers;
+        if (argument.equalsIgnoreCase("@p")) {
+            Location location = null;
+            if (sender instanceof Player player) location = player.getLocation();
+            if (sender instanceof BlockCommandSender block) location = block.getBlock().getLocation();
+            if (location == null || location.getWorld() == null) return null;
+            Collection<Player> playerEntities = location.getWorld().getEntitiesByClass(Player.class);
+            if (playerEntities.isEmpty()) return null;
+            Player closestPlayer = null;
+            for (Player playerEntity : playerEntities) {
+                if (closestPlayer == null || playerEntity.getLocation().distanceSquared(location) < closestPlayer.getLocation().distanceSquared(location))
+                    closestPlayer = playerEntity;
+            }
+            return new ArrayList<>(List.of((closestPlayer)));
+        }
+        if (argument.equalsIgnoreCase("@r")) return new ArrayList<>(List.of(onlinePlayers.get(new Random().nextInt(onlinePlayers.size()))));
+
+        return null;
     }
 
     @Override

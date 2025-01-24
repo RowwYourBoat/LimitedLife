@@ -29,7 +29,7 @@ public class MainTabCompleter implements TabCompleter {
         if (timeArg.isEmpty()) {
             arguments.add("-");
             arguments.add("+");
-        } else if (timeArg.length() == 1 && (args[1].equalsIgnoreCase("-") || timeArg.equalsIgnoreCase("+"))) {
+        } else if (timeArg.length() == 1 && (timeArg.equalsIgnoreCase("-") || timeArg.equalsIgnoreCase("+"))) {
             arguments.add("num");
         } else if (timeArg.length() >= 2) {
             arguments.add("h");
@@ -52,6 +52,14 @@ public class MainTabCompleter implements TabCompleter {
         return new ArrayList<>(Arrays.asList(splitString));
     }
 
+    private List<String> getPlayerNamesAndSelectors() {
+        List<String> arguments = new ArrayList<>();
+        Bukkit.getOnlinePlayers().forEach(player -> arguments.add(player.getName()));
+        List<String> selectors = new ArrayList<>(Arrays.asList("@a", "@p", "@r"));
+        arguments.addAll(selectors);
+        return arguments;
+    }
+
     @Override
     public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String s, String[] args) {
         if (args.length == 1)
@@ -62,7 +70,7 @@ public class MainTabCompleter implements TabCompleter {
             else if (args[0].equalsIgnoreCase("boogeyman"))
                 return stringToList("roll,cure,clear,punish,cancel");
             else if (args[0].equalsIgnoreCase("modifytime"))
-                return null;
+                return getPlayerNamesAndSelectors();
             else if (args[0].equalsIgnoreCase("gettime"))
                 return getOfflinePlayers();
             else if (args[0].equalsIgnoreCase("help"))

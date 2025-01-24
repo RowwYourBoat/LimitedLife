@@ -2,10 +2,12 @@ package me.rowan.limitedlife.commands.subcommands;
 
 import me.rowan.limitedlife.LimitedLife;
 import me.rowan.limitedlife.commands.MainCommandExecutor;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class ModifyTimeCommand {
 
@@ -16,9 +18,9 @@ public class ModifyTimeCommand {
 
     public static boolean execute(CommandSender sender, String[] args) {
         if (args.length < 3) return invalidSyntax(sender);
-        Player player = Bukkit.getPlayer(args[1]);
-        if (player == null) {
-            sender.sendMessage(ChatColor.DARK_RED + "That player doesn't exist!");
+        List<Player> players = MainCommandExecutor.getPlayersFromArgument(sender, args[1]);
+        if (players == null) {
+            sender.sendMessage(ChatColor.DARK_RED + "Unable to find player(s).");
             return true;
         }
         String timeArgument = args[2];
@@ -47,36 +49,28 @@ public class ModifyTimeCommand {
             timeType = "s";
         else return invalidSyntax(sender);
 
+        HashMap<String, Double> powerOfHash = new HashMap<>();
+        powerOfHash.put("h", 2D);
+        powerOfHash.put("m", 1D);
+        powerOfHash.put("s", 0D);
+        double product = Math.pow(60, powerOfHash.get(timeType));
+
         if (subtract) {
-            if (timeType.equalsIgnoreCase("h")) {
-                LimitedLife.SaveHandler.subtractPlayerTime(player, timeAmountToModify * 60 * 60, true);
-                sender.sendMessage(ChatColor.DARK_GREEN + "You've subtracted " + timeAmountToModify + " hours from " + player.getName() + "'s timer!");
-                MainCommandExecutor.commandFeedback(sender, "Subtracted " + timeAmountToModify + " hours from " + player.getName() + "'s timer");
-            } else if (timeType.equalsIgnoreCase("m")) {
-                LimitedLife.SaveHandler.subtractPlayerTime(player, timeAmountToModify * 60, true);
-                sender.sendMessage(ChatColor.DARK_GREEN + "You've subtracted " + timeAmountToModify + " minutes from " + player.getName() + "'s timer!");
-                MainCommandExecutor.commandFeedback(sender, "Subtracted " + timeAmountToModify + " minutes from " + player.getName() + "'s timer");
-            } else {
-                LimitedLife.SaveHandler.subtractPlayerTime(player, timeAmountToModify, true);
-                sender.sendMessage(ChatColor.DARK_GREEN + "You've subtracted " + timeAmountToModify + " seconds from " + player.getName() + "'s timer!");
-                MainCommandExecutor.commandFeedback(sender, "Subtracted " + timeAmountToModify + " seconds from " + player.getName() + "'s timer");
-            }
+            players.forEach(player -> LimitedLife.SaveHandler.subtractPlayerTime(player, Double.valueOf(timeAmountToModify * product).longValue(), true));
+            String name = "everyone";
+            if (players.size() == 1) name = players.getFirst().getName();
+            sender.sendMessage(ChatColor.DARK_GREEN + "You've subtracted " + timeAmountToModify + timeType + " from " + name + "'s timer!");
+            MainCommandExecutor.commandFeedback(sender, "Subtracted " + timeAmountToModify + timeType + " from " + name + "'s timer");
         } else {
-            if (timeType.equalsIgnoreCase("h")) {
-                LimitedLife.SaveHandler.addPlayerTime(player, timeAmountToModify * 60 * 60);
-                sender.sendMessage(ChatColor.DARK_GREEN + "You've added " + timeAmountToModify + " hours to " + player.getName() + "'s timer!");
-                MainCommandExecutor.commandFeedback(sender, "Added " + timeAmountToModify + " hours to " + player.getName() + "'s timer");
-            } else if (timeType.equalsIgnoreCase("m")) {
-                LimitedLife.SaveHandler.addPlayerTime(player, timeAmountToModify * 60);
-                sender.sendMessage(ChatColor.DARK_GREEN + "You've added " + timeAmountToModify + " minutes to " + player.getName() + "'s timer!");
-                MainCommandExecutor.commandFeedback(sender, "Added " + timeAmountToModify + " minutes to " + player.getName() + "'s timer");
-            } else {
-                LimitedLife.SaveHandler.addPlayerTime(player, timeAmountToModify);
-                sender.sendMessage(ChatColor.DARK_GREEN + "You've added " + timeAmountToModify + " seconds to " + player.getName() + "'s timer!");
-                MainCommandExecutor.commandFeedback(sender, "Added " + timeAmountToModify + " seconds to " + player.getName() + "'s timer");
-            }
-            if (LimitedLife.SaveHandler.getPlayerTimeLeft(player) > 0)
-                LimitedLife.SaveHandler.removePlayerDeathMark(player);
+            players.forEach(player -> {
+                LimitedLife.SaveHandler.addPlayerTime(player, Double.valueOf(timeAmountToModify * product).longValue());
+                if (LimitedLife.SaveHandler.getPlayerTimeLeft(player) > 0)
+                    LimitedLife.SaveHandler.removePlayerDeathMark(player);
+            });
+            String name = "everyone";
+            if (players.size() == 1) name = players.getFirst().getName();
+            sender.sendMessage(ChatColor.DARK_GREEN + "You've added " + timeAmountToModify + timeType + " to " + name + "'s timer!");
+            MainCommandExecutor.commandFeedback(sender, "Added " + timeAmountToModify + timeType + " to " + name + "'s timer");
         }
         return true;
     }
