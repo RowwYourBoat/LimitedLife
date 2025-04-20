@@ -58,7 +58,7 @@ public class ModifyTimeCommand {
         if (subtract) {
             players.forEach(player -> LimitedLife.SaveHandler.subtractPlayerTime(player, Double.valueOf(timeAmountToModify * product).longValue(), true));
             String name = "everyone";
-            if (players.size() == 1) name = players.getFirst().getName();
+            if (players.size() == 1) name = players.get(0).getName();
             sender.sendMessage(ChatColor.DARK_GREEN + "You've subtracted " + timeAmountToModify + timeType + " from " + name + "'s timer!");
             MainCommandExecutor.commandFeedback(sender, "Subtracted " + timeAmountToModify + timeType + " from " + name + "'s timer");
         } else {
@@ -68,7 +68,7 @@ public class ModifyTimeCommand {
                     LimitedLife.SaveHandler.removePlayerDeathMark(player);
             });
             String name = "everyone";
-            if (players.size() == 1) name = players.getFirst().getName();
+            if (players.size() == 1) name = players.get(0).getName();
             sender.sendMessage(ChatColor.DARK_GREEN + "You've added " + timeAmountToModify + timeType + " to " + name + "'s timer!");
             MainCommandExecutor.commandFeedback(sender, "Added " + timeAmountToModify + timeType + " to " + name + "'s timer");
         }
