@@ -76,7 +76,7 @@ public class InventoryEvents implements Listener {
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 if (player.isOnline()) {
                     ItemStack helmet = player.getInventory().getHelmet();
-                    if (helmet != null) {
+                    if (helmet != null && helmet.getType() != Material.AIR) {
                         helmet.setAmount(0);
                         player.sendMessage(ChatColor.DARK_RED + "Helmets are prohibited!");
                     }
